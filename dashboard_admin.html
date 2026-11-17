@@ -176,18 +176,20 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
             margin-bottom: 20px;
         }
         .section-title {
             font-size: 1.1rem;
             font-weight: 700;
             margin: 0;
+            min-width: 0;
         }
 
         /* --- Chart Container --- */
         .chart-container {
             position: relative;
-            min-height: 300px;
+            min-height: 0;
             width: 100%;
         }
         .chart-container svg {
@@ -198,8 +200,8 @@
         .chart-legend {
             display: flex;
             flex-wrap: wrap;
-            gap: 16px;
-            margin-top: 12px;
+            gap: 12px;
+            margin-top: 8px;
             color: var(--text-light);
             font-size: 0.8rem;
         }
@@ -218,6 +220,26 @@
             width: 18px;
             height: 0;
             border-top: 3px solid #47665b;
+        }
+
+        @media (max-width: 575px) {
+            .section-card {
+                padding: 16px;
+            }
+
+            .section-header {
+                gap: 8px;
+                margin-bottom: 12px;
+            }
+
+            .section-header .section-title {
+                font-size: 1rem;
+            }
+
+            .chart-legend {
+                gap: 8px;
+                font-size: 0.75rem;
+            }
         }
 
         /* --- Action Queue --- */

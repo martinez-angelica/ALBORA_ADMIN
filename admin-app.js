@@ -468,7 +468,25 @@
             .mock-chart .bar-wrapper,.mock-bar-chart .bar-wrapper{height:100%;justify-content:flex-end;min-height:0}
             .mock-chart .bar,.mock-bar-chart .bar{flex:0 0 auto;max-height:calc(100% - 28px)}
             .admin-read-only button[data-product-edit],.admin-read-only button[data-product-delete]{display:none}
-            @media(max-width:768px){.sidebar-toggle{display:inline-block}.sidebar{z-index:1000;transform:translateX(-100%);transition:transform .2s ease}.sidebar.admin-sidebar-open{transform:translateX(0)}.main-content{margin-left:0!important}.topbar{gap:10px;flex-wrap:wrap}.page-content,.dashboard-container{padding:18px!important}}
+            @media(max-width:900px){
+                .sidebar-toggle{display:inline-block}
+                body .sidebar{
+                    position:fixed!important;top:0!important;bottom:0!important;left:0!important;right:auto!important;
+                    width:var(--sidebar-width,260px)!important;max-width:80vw!important;
+                    min-height:100vh!important;height:100vh!important;max-height:none!important;
+                    margin:0!important;padding:0!important;overflow-y:auto!important;z-index:1000;
+                    transform:translateX(-100%);transition:transform .2s ease
+                }
+                body .sidebar.admin-sidebar-open{transform:translateX(0)}
+                body .sidebar .sidebar-logo-container{
+                    display:block!important;text-align:center!important;padding:20px 25px!important;margin-bottom:10px!important
+                }
+                body .sidebar .sidebar-menu{display:block!important;max-height:none!important;overflow:visible!important}
+                body .sidebar .sidebar-menu li a{display:block!important;padding:12px 25px!important}
+                .main-content{margin-left:0!important;width:100%!important}
+                .topbar{gap:10px;flex-wrap:wrap}
+                .page-content,.dashboard-container{padding:18px!important}
+            }
             @media print{.sidebar,.topbar,.btn,.table-tools,.table-page-tools,.admin-feedback{display:none!important}body:after{content:"ALBORÁ · " attr(data-print-user) " · " attr(data-print-time);display:block;position:fixed;bottom:0;right:0;font:10px Arial,sans-serif;color:#777}}
         `;
         document.head.appendChild(style);
@@ -1763,10 +1781,14 @@
             revenue: totals.get(bucket.key) || 0
         }));
 
-        const width = 960;
-        const height = 280;
+        const width = Math.max(320, Math.round(container.clientWidth || 960));
+        const compact = width < 500;
+        const height = compact ? 260 : 300;
         const isLineChart = period === 'monthly' || period === 'yearly';
-        const margin = { top: 16, right: 58, bottom: 38, left: 64 };
+        const margin = compact
+            ? { top: 18, right: 12, bottom: 42, left: 48 }
+            : { top: 20, right: 20, bottom: 46, left: 62 };
+        const axisFontSize = compact ? 9 : 12;
         const plotWidth = width - margin.left - margin.right;
         const plotHeight = height - margin.top - margin.bottom;
         const maxRevenue = Math.max(0, ...values.map(item => item.revenue));
@@ -1790,7 +1812,9 @@
         add('desc', { id: 'dashboard-sales-chart-description' },
             isLineChart
                 ? 'A green line shows product sales in pesos over time.'
-                : 'Gold bars show product sales in pesos for each time bucket.');
+                : period === 'daily'
+                    ? 'Gold bars show product sales in pesos from Monday through Sunday.'
+                    : 'Gold bars show product sales in pesos for each time bucket.');
 
         for (let tick = 0; tick <= 4; tick += 1) {
             const ratio = tick / 4;
@@ -1799,7 +1823,7 @@
             add('line', { x1: margin.left, y1: y, x2: width - margin.right, y2: y, stroke: '#eee8dc', 'stroke-width': 1 });
             add('text', {
                 x: margin.left - 8, y: y + 4, 'text-anchor': 'end',
-                fill: '#7c796f', 'font-size': 11
+                fill: '#7c796f', 'font-size': axisFontSize
             }, amount >= 1000 ? `₱${(amount / 1000).toFixed(amount >= 10000 ? 0 : 1)}k` : `₱${Math.round(amount)}`);
         }
 
@@ -1842,7 +1866,7 @@
         values.forEach((item, index) => {
             add('text', {
                 x: x(index), y: height - 12, 'text-anchor': 'middle',
-                fill: '#7c796f', 'font-size': period === 'monthly' ? 10 : 11
+                fill: '#7c796f', 'font-size': compact ? 8.5 : period === 'monthly' ? 11 : 12
             }, item.label);
         });
         if (!maxRevenue) {
@@ -1851,11 +1875,11 @@
                 'text-anchor': 'middle', fill: '#7c796f', 'font-size': 14
             }, 'No sales recorded in this period');
         }
-        const label = period === 'daily' ? 'Daily · current week (Monday-Sunday)' :
+        const label = period === 'daily' ? 'Daily · Monday-Sunday' :
             period === 'weekly' ? 'Weekly · last 8 weeks' :
                 period === 'monthly' ? 'Monthly · last 12 months' : 'Yearly · last 6 years';
         const chartTitle = $('#chartTitle');
-        if (chartTitle) chartTitle.textContent = `Product sales · ${label}`;
+        if (chartTitle) chartTitle.textContent = `Product sales · ${period[0].toUpperCase()}${period.slice(1)}`;
         container.setAttribute('aria-label', `Product sales ${isLineChart ? 'line' : 'bar'} chart. ${label}.`);
         container.replaceChildren(svg);
         const legendItems = $$('.chart-legend-item', $('.chart-legend'));
@@ -1978,6 +2002,17 @@
             periodSelect.dataset.chartBound = 'true';
             periodSelect.addEventListener('change', renderDashboardCharts);
         }
+        if (periodSelect && !periodSelect.dataset.chartResizeBound) {
+            periodSelect.dataset.chartResizeBound = 'true';
+            let resizeFrame = 0;
+            window.addEventListener('resize', () => {
+                if (resizeFrame) cancelAnimationFrame(resizeFrame);
+                resizeFrame = requestAnimationFrame(() => {
+                    resizeFrame = 0;
+                    renderDashboardSalesComboChart(reportingRows());
+                });
+            }, { passive: true });
+        }
     }
 
     function renderBusinessAnalytics() {
@@ -1993,11 +2028,11 @@
         const cards = $$('.stat-card');
         if (cards[0]?.querySelector('.stat-value')) cards[0].querySelector('.stat-value').textContent = reportMoney(revenue);
         if (cards[0]?.querySelector('.stat-desc')) cards[0].querySelector('.stat-desc').textContent = `${rows.length ? new Set(rows.map(row => `${row.channel}:${row.orderId}`)).size : 0} completed order(s)`;
-        if (cards[1]?.querySelector('.stat-value')) cards[1].querySelector('.stat-value').textContent = `${onlinePercent.toFixed(1)}%`;
+        if (cards[1]?.querySelector('.stat-value')) cards[1].querySelector('.stat-value').textContent = `${onlinePercent.toFixed(2)}%`;
         if (cards[1]?.querySelector('.stat-desc')) cards[1].querySelector('.stat-desc').textContent = `${reportMoney(online)} from verified online product payments`;
-        if (cards[2]?.querySelector('.stat-value')) cards[2].querySelector('.stat-value').textContent = `${walkInPercent.toFixed(1)}%`;
+        if (cards[2]?.querySelector('.stat-value')) cards[2].querySelector('.stat-value').textContent = `${walkInPercent.toFixed(2)}%`;
         if (cards[2]?.querySelector('.stat-desc')) cards[2].querySelector('.stat-desc').textContent = `${reportMoney(walkIn)} from completed POS sales`;
-        if (cards[3]?.querySelector('.stat-value')) cards[3].querySelector('.stat-value').textContent = `${revenue ? grossProfit / revenue * 100 : 0}%`;
+        if (cards[3]?.querySelector('.stat-value')) cards[3].querySelector('.stat-value').textContent = `${(revenue ? grossProfit / revenue * 100 : 0).toFixed(2)}%`;
         if (cards[3]?.querySelector('.stat-desc')) cards[3].querySelector('.stat-desc').textContent = `${reportMoney(grossProfit)} gross profit using current catalog costs`;
 
         const channelBar = $('.channel-bar');
@@ -2006,17 +2041,17 @@
             if (segments[0]) {
                 segments[0].style.width = `${onlinePercent}%`;
                 segments[0].textContent = onlinePercent >= 8 ? `Online ${onlinePercent.toFixed(0)}%` : '';
-                segments[0].setAttribute('aria-label', `Online ${onlinePercent.toFixed(1)}%`);
+                segments[0].setAttribute('aria-label', `Online ${onlinePercent.toFixed(2)}%`);
             }
             if (segments[1]) {
                 segments[1].style.width = `${walkInPercent}%`;
                 segments[1].textContent = walkInPercent >= 8 ? `Walk-in ${walkInPercent.toFixed(0)}%` : '';
-                segments[1].setAttribute('aria-label', `Walk-in ${walkInPercent.toFixed(1)}%`);
+                segments[1].setAttribute('aria-label', `Walk-in ${walkInPercent.toFixed(2)}%`);
             }
         }
         const channelDescriptions = $$('.channel-bar + .d-flex .stat-desc');
-        if (channelDescriptions[0]) channelDescriptions[0].textContent = `Online · ${new Set(rows.filter(row => row.channel === 'Online').map(row => row.orderId)).size} orders · ${reportMoney(online)} · ${onlinePercent.toFixed(1)}%`;
-        if (channelDescriptions[1]) channelDescriptions[1].textContent = `Walk-in · ${new Set(rows.filter(row => row.channel === 'Walk-in').map(row => row.orderId)).size} sales · ${reportMoney(walkIn)} · ${walkInPercent.toFixed(1)}%`;
+        if (channelDescriptions[0]) channelDescriptions[0].textContent = `Online · ${new Set(rows.filter(row => row.channel === 'Online').map(row => row.orderId)).size} orders · ${reportMoney(online)} · ${onlinePercent.toFixed(2)}%`;
+        if (channelDescriptions[1]) channelDescriptions[1].textContent = `Walk-in · ${new Set(rows.filter(row => row.channel === 'Walk-in').map(row => row.orderId)).size} sales · ${reportMoney(walkIn)} · ${walkInPercent.toFixed(2)}%`;
         const categoryTotals = new Map();
         rows.forEach(row => categoryTotals.set(row.category, (categoryTotals.get(row.category) || 0) + row.revenue));
         renderBarChart($('.mock-bar-chart'), Array.from(categoryTotals, ([label, value]) => ({ label, value }))
