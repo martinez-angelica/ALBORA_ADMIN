@@ -320,6 +320,120 @@
             display: block;
             margin-bottom: 2px;
         }
+
+        @media (max-width: 767.98px) {
+            body .page-content {
+                padding: 16px 12px !important;
+            }
+
+            .page-title {
+                font-size: 1.45rem;
+            }
+
+            .page-subtitle {
+                font-size: 0.82rem;
+                margin-bottom: 16px;
+            }
+
+            .page-content > .d-flex.justify-content-between.align-items-start {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .page-content > .d-flex.justify-content-between.align-items-start > div:last-child {
+                width: 100%;
+            }
+
+            #clearTransactionHistory,
+            #exportTransactions {
+                flex: 1 1 130px;
+            }
+
+            .stat-card {
+                padding: 14px;
+                min-width: 0;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+                overflow-wrap: anywhere;
+            }
+
+            .filter-bar,
+            .filter-left {
+                align-items: stretch;
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .search-input {
+                width: 100%;
+                min-width: 0;
+            }
+
+            .filter-links {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                width: 100%;
+            }
+
+            .transaction-filters .form-control,
+            .transaction-filters .form-select {
+                width: 100%;
+                min-width: 0;
+                font-size: 0.78rem;
+            }
+
+            #applyTransactionFilters {
+                grid-column: 1 / -1;
+            }
+
+            .section-card {
+                padding: 12px;
+                min-width: 0;
+            }
+
+            .section-title {
+                font-size: 0.95rem;
+                margin-bottom: 12px;
+            }
+
+            .transaction-table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .transaction-table th,
+            .transaction-table td {
+                padding: 6px 3px;
+                font-size: 0.66rem;
+                line-height: 1.3;
+                overflow-wrap: anywhere;
+                word-break: normal;
+            }
+
+            .transaction-table th {
+                font-size: 0.62rem;
+            }
+
+            .transaction-table th:nth-child(1) { width: 23%; }
+            .transaction-table th:nth-child(2) { width: 18%; }
+            .transaction-table th:nth-child(3) { width: 21%; }
+            .transaction-table th:nth-child(4) { width: 13%; }
+            .transaction-table th:nth-child(5) { width: 15%; }
+            .transaction-table th:nth-child(6) { width: 10%; }
+
+            .pagination-text {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+
+            .info-box {
+                padding: 12px;
+                font-size: 0.78rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -434,7 +548,7 @@
                 
                 <div class="table-responsive">
                     <!-- Data table -->
-                    <table class="table table-custom table-borderless">
+                    <table class="table table-custom table-borderless transaction-table">
                         <thead>
                             <tr>
                                 <th>Transaction</th>

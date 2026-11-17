@@ -353,6 +353,101 @@
             line-height: 1.5;
             margin-bottom: 20px;
         }
+
+        @media (max-width: 767.98px) {
+            body .page-content {
+                padding: 16px 12px !important;
+            }
+
+            .page-title {
+                font-size: 1.45rem;
+            }
+
+            .page-content > .d-flex.justify-content-between.align-items-start {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 12px;
+            }
+
+            .page-content > .d-flex.justify-content-between.align-items-start > .btn {
+                align-self: flex-start;
+                max-width: 100%;
+                white-space: normal;
+            }
+
+            .stat-card {
+                padding: 14px;
+                min-width: 0;
+            }
+
+            .stat-value {
+                font-size: 1.5rem;
+                overflow-wrap: anywhere;
+            }
+
+            .filter-bar {
+                display: grid;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 8px;
+                width: 100%;
+            }
+
+            .search-input {
+                grid-column: 1 / -1;
+                width: 100%;
+                min-width: 0;
+            }
+
+            .filter-select {
+                width: 100%;
+                min-width: 0;
+                font-size: 0.78rem;
+            }
+
+            .filter-bar > .filter-select:last-child {
+                grid-column: 1 / -1;
+            }
+
+            .section-card {
+                padding: 12px;
+                min-width: 0;
+            }
+
+            .section-title {
+                font-size: 0.95rem;
+                margin-bottom: 12px;
+            }
+
+            .historical-table {
+                width: 100%;
+                table-layout: fixed;
+            }
+
+            .historical-table th,
+            .historical-table td {
+                padding: 6px 3px;
+                font-size: 0.68rem;
+                line-height: 1.3;
+                overflow-wrap: anywhere;
+                word-break: normal;
+            }
+
+            .historical-table th {
+                font-size: 0.63rem;
+            }
+
+            .historical-table th:nth-child(1) { width: 18%; }
+            .historical-table th:nth-child(2) { width: 16%; }
+            .historical-table th:nth-child(3) { width: 17%; }
+            .historical-table th:nth-child(4) { width: 18%; }
+            .historical-table th:nth-child(5) { width: 16%; }
+            .historical-table th:nth-child(6) { width: 15%; }
+
+            .review-row {
+                gap: 10px;
+                font-size: 0.78rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -468,7 +563,7 @@
                         
                         <div class="table-responsive">
                             <!-- Data table -->
-                            <table class="table table-custom table-borderless">
+                            <table class="table table-custom table-borderless historical-table">
                                 <thead>
                                     <tr>
                                         <th>Record</th>
