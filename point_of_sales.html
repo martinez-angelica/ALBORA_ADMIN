@@ -257,6 +257,8 @@
         }
 
         .product-card {
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
             border: 1px solid #eee8da;
             border-radius: 12px;
@@ -272,12 +274,16 @@
         .product-image {
             display: block;
             width: 100%;
-            aspect-ratio: 1 / 0.82;
+            aspect-ratio: 1 / 0.95;
             object-fit: cover;
             background: #f3eddf;
+            flex: 0 0 auto;
         }
 
         .product-card-body {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
             padding: 13px;
         }
 
@@ -349,7 +355,7 @@
 
         .product-add {
             width: 100%;
-            margin-top: 10px;
+            margin-top: auto;
         }
 
         .empty-catalog {
@@ -634,7 +640,7 @@
             }
 
             .product-image {
-                aspect-ratio: 1 / 0.72;
+                aspect-ratio: 1 / 1;
             }
 
             .product-card-body {
@@ -708,7 +714,7 @@
 
             .product-add {
                 min-height: 36px;
-                margin-top: 6px;
+                margin-top: auto;
                 padding: 4px 2px;
                 font-size: 0.6rem;
                 line-height: 1.2;
