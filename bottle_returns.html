@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Bottle Returns</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            margin: 0;
+            overflow-x: hidden;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            font-family: 'Lato', sans-serif;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            width: var(--sidebar-width);
+            height: 100vh;
+            overflow-y: auto;
+            background-color: var(--alborá-gold);
+            color: white;
+        }
+
+        .sidebar-logo-container {
+            text-align: center;
+            margin-bottom: 10px;
+            padding: 20px 25px;
+        }
+
+        .sidebar-logo {
+            max-width: 155px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            flex-grow: 1;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .sidebar-menu li a {
+            display: block;
+            padding: 12px 25px;
+            color: white;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover,
+        .sidebar-menu li.active a {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu li.active a {
+            padding-left: 21px;
+            border-left: 4px solid white;
+        }
+
+        .sidebar-section-title {
+            padding: 20px 25px 10px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin-left: var(--sidebar-width);
+        }
+
+        .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+            
+        }
+
+        .breadcrumb-text,
+        .text-light-custom {
+            color: var(--text-light);
+        }
+
+        .breadcrumb-text,
+        .user-info {
+            font-size: 0.85rem;
+        }
+
+        .page-content {
+            flex-grow: 1;
+            padding: 30px;
+        }
+
+        .page-title {
+            margin-bottom: 5px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .page-subtitle {
+            margin-bottom: 25px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .section-card,
+        .program-banner,
+        .reward-card {
+            border: 1px solid #E8D59A;
+            border-radius: 12px;
+            background: var(--surface);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+        }
+
+        .section-card {
+            margin-bottom: 20px;
+            padding: 25px;
+        }
+
+        .program-banner {
+            margin-bottom: 24px;
+            padding: 28px;
+            border-color: #F0D890;
+            background: linear-gradient(120deg, #FAF0D0, #FFFFFF);
+        }
+
+        .program-banner h2 {
+            margin-bottom: 8px;
+            color: #80651F;
+            font-weight: 700;
+        }
+
+        .program-banner p {
+            margin-bottom: 0;
+            color: var(--text-light);
+        }
+
+        .section-title {
+            margin-bottom: 18px;
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .reward-card {
+            height: 100%;
+            padding: 18px;
+            border-color: #F0D890;
+            text-align: center;
+        }
+
+        .reward-size {
+            margin-bottom: 5px;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .reward-amount {
+            color: #80651F;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .reward-detail {
+            color: var(--text-light);
+            font-size: 0.8rem;
+        }
+
+        .form-label {
+            font-weight: 700;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: var(--alborá-gold);
+            box-shadow: 0 0 0 0.2rem rgba(197, 160, 56, 0.2);
+        }
+
+        .voucher-total {
+            padding: 14px 16px;
+            border: 1px solid #F0D890;
+            border-radius: 8px;
+            background: #FAF0D0;
+        }
+
+        .voucher-total strong {
+            color: #80651F;
+            font-size: 1.25rem;
+        }
+
+        .btn-gold {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            background-color: var(--alborá-gold);
+            color: white;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+
+        .table-custom th {
+            padding-bottom: 15px;
+            border-bottom: 1px solid #EAEAEA;
+            color: var(--text-light);
+            font-size: 0.8rem;
+            font-weight: 400;
+            white-space: nowrap;
+        }
+
+        .table-custom td {
+            padding: 13px 8px;
+            border-bottom: 1px solid #FFF8E8;
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: static;
+                width: 100%;
+                height: auto;
+                max-height: 50vh;
+            }
+
+            .main-content {
+                margin-left: 0;
+            }
+
+            .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+                padding: 15px 20px;
+            }
+
+            .page-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Bottle Returns -->
+    <aside class="sidebar">
+        <div class="sidebar-logo-container">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="sidebar-logo">
+        </div>
+        <ul class="sidebar-menu">
+            <li><a href="dashboard_admin.html">Overview</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="alerts_stock.html">Inventory</a></li>
+            <li><a href="order_list.html">Orders</a></li>
+            <li><a href="product_payment_proof.html">Payment verification</a></li>
+            <li><a href="two_stage_payment.html">Two-stage payments</a></li>
+            <li><a href="point_of_sales.html">Point of sale</a></li>
+            <li><a href="transaction_list.html">Transactions</a></li>
+            <li><a href="sales.html">Reports</a></li>
+            <li><a href="business_analytics.html">Business analytics</a></li>
+            <li><a href="historical_data.html">Historical data</a></li>
+            <li><a href="system_settings.html">System settings</a></li>
+            <li><a href="user%20%26%20permissions.html">Users &amp; permissions</a></li>
+            <li><a href="backup%20%26%20data%20recovery.html">Backup &amp; recovery</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="topbar">
+            <div class="breadcrumb-text">Admin Only / Bottle returns</div>
+            <div class="user-info d-flex align-items-center gap-3">
+                <span>Admin access</span>
+                <a href="admin_logout.html" style="color: #C5A038; text-decoration: none;">Log out</a>
+            </div>
+        </header>
+
+        <!-- Page content area -->
+        <div class="page-content">
+            <div class="mb-4">
+                <h1 class="page-title">Bottle returns</h1>
+                <div class="page-subtitle">Reward customers for returning empty Alborá Luxury Scents bottles.</div>
+            </div>
+
+            <!-- Page section -->
+            <section class="program-banner" aria-labelledby="program-title">
+                <h2 id="program-title">DON'T THROW IT—RETURN IT.</h2>
+                <p>Give your empty Alborá Luxury Scents bottle a second life and enjoy rewards on your next purchase.</p>
+            </section>
+
+            <!-- Page section -->
+            <section class="mb-4" aria-labelledby="rewards-title">
+                <h2 id="rewards-title" class="section-title">Return &amp; Get a Voucher</h2>
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="reward-card">
+                            <div class="reward-size">10ml</div>
+                            <div class="reward-amount">₱5</div>
+                            <div class="reward-detail">Bottle + Cap</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="reward-card">
+                            <div class="reward-size">30ml</div>
+                            <div class="reward-amount">₱20</div>
+                            <div class="reward-detail">Bottle + Cap</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="reward-card">
+                            <div class="reward-size">50ml</div>
+                            <div class="reward-amount">₱25</div>
+                            <div class="reward-detail">Bottle + Cap</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="row g-4">
+                <div class="col-lg-5">
+                    <!-- Page section -->
+                    <section class="section-card">
+                        <h2 class="section-title">Record a bottle return</h2>
+                        <!-- Form controls -->
+                        <form id="returnForm">
+                            <div class="mb-3">
+                                <label for="customerName" class="form-label">Customer name</label>
+                                <input id="customerName" name="customerName" class="form-control" type="text" maxlength="100" required>
+                            </div>
+                            <div class="row g-3 mb-3">
+                                <div class="col-sm-6">
+                                    <label for="bottleSize" class="form-label">Bottle size</label>
+                                    <select id="bottleSize" name="bottleSize" class="form-select" required>
+                                        <option value="" selected disabled>Select size</option>
+                                        <option value="10">10ml — ₱5</option>
+                                        <option value="30">30ml — ₱20</option>
+                                        <option value="50">50ml — ₱25</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="quantity" class="form-label">Quantity</label>
+                                    <input id="quantity" name="quantity" class="form-control" type="number" min="1" max="100" value="1" required>
+                                </div>
+                            </div>
+                            <div class="voucher-total mb-3" aria-live="polite">
+                                Voucher value: <strong id="voucherValue">₱0</strong>
+                            </div>
+                            <button type="submit" class="btn btn-gold w-100">Record return &amp; issue voucher</button>
+                        </form>
+                        <div id="formMessage" class="mt-3" role="status" aria-live="polite"></div>
+                    </section>
+                </div>
+
+                <div class="col-lg-7">
+                    <!-- Page section -->
+                    <section class="section-card">
+                        <h2 class="section-title">Recent bottle returns</h2>
+                        <div class="table-responsive">
+                            <!-- Data table -->
+                            <table class="table table-custom table-borderless mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Size</th>
+                                        <th>Qty</th>
+                                        <th>Voucher</th>
+                                        <th>Code</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="returnsTable">
+                                    <tr><td colspan="6" class="text-center text-muted py-4">No returns recorded yet.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        (function () {
+            const storageKey = 'alboraBottleReturns';
+            const voucherValues = { '10': 5, '30': 20, '50': 25 };
+            const form = document.getElementById('returnForm');
+            const sizeInput = document.getElementById('bottleSize');
+            const quantityInput = document.getElementById('quantity');
+            const voucherValue = document.getElementById('voucherValue');
+            const table = document.getElementById('returnsTable');
+            const formMessage = document.getElementById('formMessage');
+
+            function readReturns() {
+                const saved = localStorage.getItem(storageKey);
+                if (!saved) return [];
+                const parsed = JSON.parse(saved);
+                if (!Array.isArray(parsed)) {
+                    throw new Error('Saved bottle return data is not in the expected format.');
+                }
+                return parsed;
+            }
+
+            function displayMessage(message, type) {
+                formMessage.className = 'mt-3 alert alert-' + type;
+                formMessage.textContent = message;
+            }
+
+            function updateVoucherValue() {
+                const unitValue = voucherValues[sizeInput.value] || 0;
+                const quantity = Number(quantityInput.value) || 0;
+                voucherValue.textContent = '₱' + (unitValue * quantity).toLocaleString('en-PH');
+            }
+
+            function renderReturns() {
+                const returns = readReturns();
+                table.replaceChildren();
+
+                if (returns.length === 0) {
+                    const row = table.insertRow();
+                    const cell = row.insertCell();
+                    cell.colSpan = 6;
+                    cell.className = 'text-center text-muted py-4';
+                    cell.textContent = 'No returns recorded yet.';
+                    return;
+                }
+
+                returns.slice().reverse().forEach(function (item) {
+                    const row = table.insertRow();
+                    [
+                        new Date(item.date).toLocaleDateString(),
+                        item.customerName,
+                        item.bottleSize + 'ml',
+                        String(item.quantity),
+                        '₱' + Number(item.voucherValue).toLocaleString('en-PH'),
+                        item.voucherCode
+                    ].forEach(function (value) {
+                        row.insertCell().textContent = value;
+                    });
+                });
+            }
+
+            sizeInput.addEventListener('change', updateVoucherValue);
+            quantityInput.addEventListener('input', updateVoucherValue);
+
+            form.addEventListener('submit', function (event) {
+                event.preventDefault();
+                if (!form.reportValidity()) return;
+
+                const size = sizeInput.value;
+                const quantity = Number(quantityInput.value);
+                const customerName = document.getElementById('customerName').value.trim();
+                if (!voucherValues[size] || !Number.isInteger(quantity) || quantity < 1 || quantity > 100 || !customerName) {
+                    displayMessage('Enter a customer name, valid bottle size, and quantity from 1 to 100.', 'danger');
+                    return;
+                }
+
+                try {
+                    const returns = readReturns();
+                    const now = new Date();
+                    const voucherCode = 'ALB-RET-' + now.getTime().toString(36).toUpperCase() +
+                        '-' + Math.random().toString(36).slice(2, 6).toUpperCase();
+                    const record = {
+                        date: now.toISOString(),
+                        customerName: customerName,
+                        bottleSize: size,
+                        quantity: quantity,
+                        voucherValue: voucherValues[size] * quantity,
+                        voucherCode: voucherCode
+                    };
+
+                    returns.push(record);
+                    localStorage.setItem(storageKey, JSON.stringify(returns));
+                    renderReturns();
+                    displayMessage('Return recorded. Voucher ' + voucherCode + ' worth ₱' +
+                        record.voucherValue.toLocaleString('en-PH') + ' issued.', 'success');
+                    form.reset();
+                    updateVoucherValue();
+                } catch (error) {
+                    displayMessage('Could not save the return: ' + error.message, 'danger');
+                }
+            });
+
+            try {
+                renderReturns();
+            } catch (error) {
+                displayMessage('Could not load saved returns: ' + error.message, 'danger');
+            }
+            updateVoucherValue();
+        }());
+    </script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

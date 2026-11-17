@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Product Payment Verification</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --sidebar-width: 260px;
+            --danger-red: #A84A4A;
+            --danger-bg: #FDF2F2;
+            --warning-bg: #FAF0D0;
+            --warning-border: #F0D890;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--alborá-gold);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo-container {
+            text-align: center;
+            padding: 20px 25px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-logo {
+            max-width: 155px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu li.active a {
+            border-left: 4px solid white;
+            padding-left: 21px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 20px 25px 10px;
+            letter-spacing: 1px;
+        }
+
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+            
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .breadcrumb-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .user-info {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        
+        .user-info span {
+            color: var(--text-light);
+            margin: 0 5px;
+        }
+
+        .page-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.6rem;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            margin-bottom: 25px;
+        }
+
+        
+        .section-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--text-dark);
+        }
+
+        
+        .proof-container {
+            background-color: #FFF8E8;
+            border-radius: 8px;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .receipt-mockup {
+            background: var(--surface);
+            border: 1px solid #EAEAEA;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 350px;
+            padding: 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .receipt-header {
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        .receipt-check {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+        
+        .receipt-check svg {
+            width: 30px;
+            height: 30px;
+            fill: none;
+            stroke: #777;
+            stroke-width: 2;
+        }
+
+        .receipt-amount-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+
+        .receipt-amount {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .receipt-divider {
+            border-top: 1px solid #EAEAEA;
+            margin: 15px 0;
+        }
+
+        .receipt-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+        
+        .receipt-row span:first-child {
+            color: var(--text-light);
+        }
+
+        .receipt-footer {
+            font-size: 0.7rem;
+            color: #B0B0B0;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .file-info {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 5px;
+        }
+        
+        .file-info strong {
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        
+        .btn-gold {
+            background-color: var(--alborá-gold);
+            color: white;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            font-weight: 700;
+            border: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background-color: var(--surface);
+            color: var(--text-dark);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 8px 15px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #FFF8E8;
+        }
+
+        .btn-danger-custom {
+            background-color: var(--danger-red);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 700;
+            border: none;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-danger-custom:hover {
+            background-color: #8f3c3c;
+            color: white;
+        }
+
+        .btn-cancel-custom {
+            background-color: var(--surface);
+            color: var(--text-dark);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-cancel-custom:hover {
+            background-color: #FFF8E8;
+        }
+
+        
+        .pill-badge-review {
+            background-color: var(--warning-bg);
+            color: #8C6010;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .pill-badge-outcome {
+            background-color: #F4F7F6;
+            color: #777;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .review-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            color: var(--text-light);
+        }
+        
+        .review-row strong {
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        .form-label {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+            font-weight: 400;
+        }
+
+        .form-control {
+            background-color: #FFF8E8;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: var(--alborá-gold);
+            background-color: var(--surface);
+        }
+
+        
+        .form-check-label {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        
+        .form-check-input:checked {
+            background-color: var(--alborá-gold);
+            border-color: var(--alborá-gold);
+        }
+
+        .form-text {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        
+        .warning-box {
+            background-color: var(--warning-bg);
+            border: 1px solid var(--warning-border);
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .warning-box-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+            color: #8C6010;
+        }
+        
+        .warning-box strong {
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        .info-box {
+            background-color: #F4F7F6;
+            border: 1px solid #E0E6E3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.8rem;
+            color: var(--text-light);
+            margin-bottom: 20px;
+        }
+
+        .info-box-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        .danger-info-box {
+            background-color: var(--danger-bg);
+            border: 1px solid #F5D0D0;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.8rem;
+            color: var(--danger-red);
+        }
+
+        .danger-info-box-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Product Payment Verification -->
+
+    
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div class="sidebar-logo-container">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="sidebar-logo">
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="dashboard_admin.html">Overview</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="alerts_stock.html">Inventory</a></li>
+            <li><a href="order_list.html">Orders</a></li>
+            <li class="active"><a href="product_payment_proof.html">Payment verification</a></li>
+            <li><a href="two_stage_payment.html">Two-stage payments</a></li>
+            <li><a href="point_of_sales.html">Point of sale</a></li>
+            <li><a href="transaction_list.html">Transactions</a></li>
+            <li><a href="sales.html">Reports</a></li>
+            <li><a href="business_analytics.html">Business analytics</a></li>
+            <li><a href="historical_data.html">Historical data</a></li>
+            <li><a href="system_settings.html">System settings</a></li>
+            
+            <li><a href="user%20%26%20permissions.html">Users & permissions</a></li>
+            <li><a href="backup%20%26%20data%20recovery.html">Backup & recovery</a></li>
+        </ul>
+    </div>
+
+    
+    <!-- Main admin workspace -->
+    <div class="main-content">
+        
+        <!-- Page header and account controls -->
+        <div class="topbar">
+            <div class="breadcrumb-text">Workspace / Payment verification</div>
+            <div class="user-info d-flex align-items-center gap-3">
+                <span>Admin access</span>
+                <a href="admin_logout.html" style="color: #C5A038; text-decoration: none;">Log out</a>
+            </div>
+        </div>
+
+        
+        <!-- Page content area -->
+        <div class="page-content">
+            
+            
+            <div class="mb-4">
+                <h1 class="page-title">Product payment verification</h1>
+                <div class="page-subtitle">Stage 1 of 2 · No order selected</div>
+            </div>
+
+            <div class="row g-4">
+                
+                <div class="col-lg-8">
+                    
+                    
+                    <!-- Content section -->
+                    <div class="section-card">
+                        <h5 class="section-title">Uploaded payment proof</h5>
+                        
+                        <div class="proof-container">
+                            <div class="text-center text-muted py-5">No payment proof uploaded</div>
+                        </div>
+                        
+                        <div class="file-info"><strong>Uploaded file</strong> · None</div>
+                        <div class="file-info mb-3"><strong>Submitted</strong> · Not submitted</div>
+                        
+                        <button class="btn btn-outline-custom" disabled>View original attachment &nearr;</button>
+                    </div>
+
+                    
+                    <!-- Content section -->
+                    <div class="section-card" id="rejectionCard">
+                        <h5 class="section-title">Rejection workflow · alternative decision</h5>
+                        <p class="form-text mb-3" style="font-size: 0.85rem; color: var(--text-light);">Use this instead of verification when the wallet transaction cannot be confirmed. The customer will be asked to upload a new proof.</p>
+                        
+                        
+                        <div id="rejectionForm">
+                            <div class="mb-3">
+                                <label class="form-label">Reason shown to customer *</label>
+                                <textarea class="form-control" rows="3"></textarea>
+                            </div>
+                            
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-danger-custom" disabled>Reject proof & request resubmission</button>
+                                <button class="btn btn-cancel-custom" disabled>Cancel rejection</button>
+                            </div>
+                            
+                            <div class="danger-info-box mt-4">
+                                <div class="danger-info-box-icon">⚠️</div>
+                                <div>
+                                    <strong style="display: block; margin-bottom: 2px; color: #30271B;">After rejection · payment stays unverified</strong>
+                                    Stage 1 changes to Rejected. No stock is deducted and shipping remains locked.
+                                </div>
+                            </div>
+                        </div>
+
+                        
+                        <div id="rejectionConfirmation" class="hidden">
+                            <div class="danger-info-box mb-3">
+                                <div class="danger-info-box-icon">⚠️</div>
+                                <div>
+                                    <strong style="display: block; margin-bottom: 2px;">Confirm rejection</strong>
+                                    This action will notify the customer and revert the order status.
+                                </div>
+                            </div>
+                            <button class="btn btn-danger-custom w-100" onclick="confirmRejection()">Yes, confirm rejection</button>
+                            <button class="btn btn-cancel-custom w-100 mt-2" onclick="cancelRejection()">No, go back</button>
+                        </div>
+                    </div>
+
+                </div>
+
+                
+                <div class="col-lg-4">
+                    
+                    
+                    <!-- Content section -->
+                    <div class="section-card">
+                        <h5 class="section-title">Review payment</h5>
+                        <span class="pill-badge-review">No payment selected</span>
+                        
+                        <div class="review-row mt-3">
+                            <span>Payment stage</span>
+                            <strong>1 · Products</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Expected amount</span>
+                            <strong>₱0.00</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Submitted amount</span>
+                            <strong>₱0.00</strong>
+                        </div>
+
+                        <div class="mb-3 mt-4">
+                            <label class="form-label">Wallet</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Reference number</label>
+                            <input type="text" class="form-control" readonly>
+                        </div>
+
+                        <div class="mb-4">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="checkAmount">
+                                <label class="form-check-label" for="checkAmount">Amount matches the order</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="checkRecipient">
+                                <label class="form-check-label" for="checkRecipient">Recipient matches business</label>
+                            </div>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="checkHistory">
+                                <label class="form-check-label" for="checkHistory">Reference found in wallet history</label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="checkUsed">
+                                <label class="form-check-label" for="checkUsed">Not used on another order</label>
+                            </div>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-box-icon">⚠️</div>
+                            <div>
+                                <strong>Verify against your wallet</strong>
+                                A screenshot alone does not confirm receipt. Check the actual wallet transaction before approving.
+                            </div>
+                        </div>
+
+                        <button class="btn btn-gold" disabled>Verify product payment</button>
+                    </div>
+
+                    
+                    <!-- Content section -->
+                    <div class="section-card mb-0">
+                        <h5 class="section-title">After verification</h5>
+                        <span class="pill-badge-outcome">No outcome</span>
+                        
+                        <p class="form-text mb-3" style="font-size: 0.85rem; color: var(--text-light);">
+                            Verification details will appear after a payment proof is submitted.
+                        </p>
+
+                        <div class="review-row mt-3">
+                            <span>Next task</span>
+                            <strong>—</strong>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    <!-- Bootstrap interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    
+    <!-- Page-specific JavaScript -->
+    <script>
+        function showRejectionConfirmation() {
+            document.getElementById('rejectionForm').classList.add('hidden');
+            document.getElementById('rejectionConfirmation').classList.remove('hidden');
+        }
+
+        function cancelRejection() {
+            document.getElementById('rejectionForm').classList.remove('hidden');
+            document.getElementById('rejectionConfirmation').classList.add('hidden');
+        }
+
+        function confirmRejection() {
+            
+            alert('Payment proof rejected. Customer notified.');
+            
+            cancelRejection();
+        }
+    </script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

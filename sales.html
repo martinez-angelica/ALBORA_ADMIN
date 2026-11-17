@@ -1,0 +1,1499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Sales Report</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--alborá-gold);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo-container {
+            text-align: center;
+            padding: 20px 25px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-logo {
+            max-width: 155px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu li.active a {
+            border-left: 4px solid white;
+            padding-left: 21px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 20px 25px 10px;
+            letter-spacing: 1px;
+        }
+
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+            
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .breadcrumb-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .user-info {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        
+        .user-info span {
+            color: var(--text-light);
+            margin: 0 5px;
+        }
+
+        .page-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        
+        .btn-gold {
+            background-color: var(--alborá-gold);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 700;
+            border: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+
+        
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            height: 100%;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .stat-currency {
+            font-size: 1rem;
+            margin-right: 2px;
+            font-weight: 700;
+        }
+
+        .stat-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        
+        .filter-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 250px;
+            position: relative;
+        }
+        
+        .search-input input {
+            padding-left: 35px;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+            background-color: var(--surface);
+            font-size: 0.85rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .filter-select {
+            width: 130px;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+            background-color: var(--surface);
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        .report-tabs {
+            display: flex;
+            gap: 20px;
+            border-bottom: 1px solid #EAEAEA;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .report-tabs a {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            padding-bottom: 9px;
+        }
+
+        .report-tabs a.active {
+            color: var(--text-dark);
+            font-weight: 700;
+            border-bottom: 2px solid var(--text-dark);
+        }
+
+        
+        .section-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .mock-chart {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-around;
+            height: 200px;
+            padding-top: 20px;
+            border-bottom: 1px solid #EAEAEA;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .bar-wrapper {
+            display: flex;
+            height: 100%;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-end;
+            width: 10%;
+        }
+
+        .mock-chart.monthly .bar-wrapper {
+            width: 7%;
+        }
+
+        .mock-chart.hourly {
+            justify-content: flex-start;
+            gap: 8px;
+            overflow-x: auto;
+        }
+
+        .mock-chart.hourly .bar-wrapper {
+            flex: 0 0 32px;
+            width: 32px;
+        }
+
+        .mock-chart.hourly .bar-label {
+            font-size: 0.6rem;
+        }
+
+        .bar {
+            width: 100%;
+            background-color: #C5A038; 
+            border-radius: 4px 4px 0 0;
+        }
+
+        .bar-label {
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-top: 10px;
+            text-align: center;
+            white-space: nowrap;
+        }
+
+        .category-sales-chart,
+        .category-product-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+        }
+
+        .category-chart-item,
+        .product-ranking-item {
+            min-width: 0;
+            padding: 14px;
+            border: 1px solid #E8D59A;
+            border-radius: 8px;
+            background: #FFF8E8;
+        }
+
+        .category-chart-heading,
+        .product-ranking-heading {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+            font-size: 0.85rem;
+            font-weight: 700;
+        }
+
+        .category-chart-track,
+        .ranking-track {
+            height: 10px;
+            overflow: hidden;
+            border-radius: 99px;
+            background: #EADFBF;
+        }
+
+        .category-chart-fill,
+        .ranking-fill {
+            height: 100%;
+            border-radius: inherit;
+            background: #C5A038;
+        }
+
+        .product-ranking-row {
+            margin-top: 12px;
+        }
+
+        .product-ranking-label {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 4px;
+            color: var(--text-light);
+            font-size: 0.75rem;
+        }
+
+        .product-ranking-label span:first-child {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .ranking-fill.least {
+            background: #D7B45A;
+        }
+
+        
+        .table-custom {
+            margin-bottom: 0;
+        }
+
+        .table-custom th {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 400;
+            border-bottom: 1px solid #EAEAEA;
+            padding: 15px;
+            background-color: #FFF8E8;
+        }
+
+        .table-custom td {
+            font-size: 0.9rem;
+            vertical-align: middle;
+            padding: 15px;
+            border-bottom: 1px solid #FFF8E8;
+        }
+        
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-responsive {
+            border: 1px solid #EAEAEA;
+            border-radius: 8px;
+        }
+
+        
+        .info-box {
+            background-color: #F4F7F6;
+            border: 1px solid #E0E6E3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .info-box-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-box strong {
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 2px;
+        }
+        
+        .reporting-footer {
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 15px;
+        }
+        .business-chart-toolbar {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .business-chart-toolbar .form-select { max-width: 360px; }
+        .business-chart-legend, .business-chart-legend span {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+        }
+        .business-chart-legend { gap: 18px; color: var(--text-light); font-size: .82rem; margin-bottom: 14px; }
+        .business-legend-swatch { width: 12px; height: 12px; border-radius: 3px; background: #c5a038; }
+        .business-legend-swatch.profit { background: #47665b; }
+        .business-category-row, .bullet-chart-row { margin: 0 0 16px; }
+        .business-category-name { font-weight: 700; margin-bottom: 7px; }
+        .business-series-row { display: grid; grid-template-columns: 58px minmax(0, 1fr) 92px; gap: 10px; align-items: center; margin: 5px 0; font-size: .82rem; }
+        .business-series-track, .bullet-track, .waterfall-track { position: relative; height: 12px; overflow: hidden; border-radius: 99px; background: #f0eee8; }
+        .business-series-fill { height: 100%; border-radius: inherit; background: #c5a038; }
+        .business-series-fill.profit { background: #47665b; }
+        .business-series-fill.loss { background: #a64b45; }
+        .business-series-value { text-align: right; white-space: nowrap; }
+        .waterfall-item { padding: 14px 0; border-bottom: 1px solid #eee8dc; }
+        .waterfall-item:last-child { border-bottom: 0; }
+        .waterfall-name { font-weight: 700; margin-bottom: 8px; }
+        .waterfall-steps { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+        .waterfall-step-label { display: flex; justify-content: space-between; gap: 5px; font-size: .78rem; margin-bottom: 5px; }
+        .waterfall-fill { position: absolute; top: 0; bottom: 0; border-radius: 99px; background: #c5a038; }
+        .waterfall-fill.cost { background: #a64b45; }
+        .waterfall-fill.profit { background: #47665b; }
+        .bullet-chart-row { display: grid; grid-template-columns: minmax(120px, 1.2fr) minmax(120px, 2fr) minmax(95px, .7fr); gap: 12px; align-items: center; }
+        .bullet-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .bullet-fill { height: 100%; border-radius: inherit; background: #47665b; }
+        .bullet-fill.low { background: #c5a038; }
+        .bullet-threshold { position: absolute; top: -3px; bottom: -3px; width: 2px; background: #8c302b; }
+        .bullet-value { text-align: right; font-size: .82rem; white-space: nowrap; }
+        .pareto-chart, .trend-chart { display: block; width: 100%; height: auto; }
+        .pareto-legend { display: flex; gap: 18px; margin-top: 10px; color: var(--text-light); font-size: .82rem; }
+        .pareto-legend .profit-key { width: 12px; height: 12px; background: #c5a038; border-radius: 2px; }
+        .pareto-legend .cumulative-key { width: 18px; height: 0; border-top: 3px solid #47665b; }
+        @media (max-width: 600px) {
+            .business-series-row { grid-template-columns: 48px minmax(0, 1fr) 78px; gap: 6px; }
+            .waterfall-steps { grid-template-columns: 1fr; gap: 8px; }
+            .bullet-chart-row { grid-template-columns: minmax(85px, 1fr) minmax(90px, 1.4fr); gap: 8px; }
+            .bullet-value { grid-column: 2; text-align: left; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Sales Report -->
+
+    
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div class="sidebar-logo-container">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="sidebar-logo">
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="dashboard_admin.html">Overview</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="alerts_stock.html">Inventory</a></li>
+            <li><a href="order_list.html">Orders</a></li>
+            <li><a href="product_payment_proof.html">Payment verification</a></li>
+            <li><a href="two_stage_payment.html">Two-stage payments</a></li>
+            <li><a href="point_of_sales.html">Point of sale</a></li>
+            <li><a href="transaction_list.html">Transactions</a></li>
+            <li class="active"><a href="sales.html">Reports</a></li>
+            <li><a href="business_analytics.html">Business analytics</a></li>
+            <li><a href="historical_data.html">Historical data</a></li>
+            <li><a href="system_settings.html">System settings</a></li>
+            
+            <li><a href="user%20%26%20permissions.html">Users & permissions</a></li>
+            <li><a href="backup%20%26%20data%20recovery.html">Backup & recovery</a></li>
+        </ul>
+    </div>
+
+    
+    <!-- Main admin workspace -->
+    <div class="main-content">
+        
+        <!-- Page header and account controls -->
+        <div class="topbar">
+            <div class="breadcrumb-text">Workspace / Reports</div>
+                <div class="user-info d-flex align-items-center gap-3">
+                    <span>Admin access</span>
+                    <a href="admin_logout.html" style="color: #C5A038; text-decoration: none;">Log out</a>
+                </div>
+        </div>
+
+        
+        <!-- Page content area -->
+        <div class="page-content">
+            
+            
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="page-title">Sales report</h1>
+                    <div class="page-subtitle">Completed POS sales and verified online product payments · excludes VAT and shipping</div>
+                </div>
+                <button id="exportReport" type="button" class="btn btn-gold">Export CSV</button>
+            </div>
+
+            
+            <div class="filter-bar" role="group" aria-label="Sales report filters">
+                <div class="search-input">
+                    <span class="search-icon" aria-hidden="true">📅</span>
+                    <input id="reportDate" type="date" class="form-control" aria-label="Report date">
+                </div>
+                <select id="reportPeriod" class="form-select filter-select" aria-label="Report period">
+                    <option value="daily">Daily</option>
+                    <option value="monthly">Monthly</option>
+                </select>
+                <select id="reportCategory" class="form-select filter-select" aria-label="Product category">
+                    <option value="">All categories</option>
+                    <option>Accessories</option>
+                    <option>Alborá Men</option>
+                    <option>Cosmetics</option>
+                    <option>Flowers</option>
+                    <option>Jewelry</option>
+                    <option>Perfume</option>
+                    <option>Perfume Women</option>
+                </select>
+                <button id="applyReportFilters" type="button" class="btn btn-gold">Apply filters</button>
+            </div>
+            <p id="reportFilterStatus" class="form-text mb-3" role="status" aria-live="polite">No sales data is available yet.</p>
+
+            
+            <div class="report-tabs">
+                <a href="sales.html" class="active">Sales</a>
+                <a href="profits.html">Profit</a>
+                <a href="transaction.html">Transactions</a>
+                <a href="inventory.html">Inventory</a>
+                <a href="product_performance.html">Product performance</a>
+            </div>
+
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Product sales</div>
+                        <div class="stat-value"><span class="stat-currency">₱</span><span id="reportProductSales">0.00</span></div>
+                        <div class="stat-desc">Net of discounts · excludes VAT and shipping</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Recognized orders</div>
+                        <div class="stat-value" id="reportPaidOrders">0</div>
+                        <div class="stat-desc">Recorded in this browser</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stat-card">
+                        <div class="stat-title">Average order value</div>
+                        <div class="stat-value"><span class="stat-currency">₱</span><span id="reportAverageOrder">0.00</span></div>
+                        <div class="stat-desc">Average recognized product revenue</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <!-- Content section -->
+            <div class="section-card mb-4">
+                <h5 id="chartTitle" class="section-title">Daily product sales (₱)</h5>
+                
+                <div id="salesChart" class="mock-chart" aria-label="Sales by period"></div>
+            </div>
+
+            <!-- Content section -->
+            <div class="section-card mb-4">
+                <h5 id="categoryChartTitle" class="section-title">Category sales</h5>
+                <div id="categorySalesChart" class="category-sales-chart" aria-label="Sales by product category"></div>
+            </div>
+
+            <!-- Content section -->
+            <div class="section-card mb-4">
+                <h5 id="productChartTitle" class="section-title">Top and least sold products by category</h5>
+                <div id="categoryProductChart" class="category-product-chart" aria-label="Top and least sold products in each category"></div>
+            </div>
+
+            <!-- Content section -->
+            <div class="section-card mb-4">
+                <div class="business-chart-toolbar">
+                    <div>
+                        <h5 id="businessChartTitle" class="section-title mb-1">Sales and profit by category</h5>
+                        <div id="businessChartDescription" class="form-text">Choose a business chart to explore sales, costs, stock, and profit.</div>
+                    </div>
+                    <label class="visually-hidden" for="businessChartType">Business report chart</label>
+                    <select id="businessChartType" class="form-select" aria-label="Choose a business report chart">
+                        <option value="category">Bar chart — sales and profit by category</option>
+                        <option value="waterfall">Waterfall chart — selling price, unit cost, profit</option>
+                        <option value="stock">Bullet chart — stock vs. low-stock threshold</option>
+                        <option value="pareto">Pareto chart — profit by SKU</option>
+                        <option value="trend">Line chart — sales trend over time</option>
+                    </select>
+                </div>
+                <div id="businessVisualization" aria-live="polite"></div>
+            </div>
+
+            
+            <!-- Content section -->
+            <div class="section-card mb-4">
+                <h5 id="breakdownTitle" class="section-title">Daily sales breakdown</h5>
+                
+                <div class="table-responsive">
+                    <!-- Data table -->
+                    <table class="table table-custom table-borderless">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Orders</th>
+                                <th>Total revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody id="salesBreakdown">
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">No sales recorded</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            
+            <div class="info-box">
+                <div class="info-box-icon">ℹ️</div>
+                <div>
+                    <strong>How this report is calculated</strong>
+                    Completed POS receipts and online orders with verified product payments are included. VAT and shipping are excluded from product revenue.
+                </div>
+            </div>
+            
+            <div class="reporting-footer">
+                Reporting currency: PHP · Timezone: Asia/Manila
+            </div>
+
+        </div>
+    </div>
+
+    
+    <!-- Bootstrap interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Page-specific JavaScript -->
+    <script>
+        const reportPeriod = document.getElementById('reportPeriod');
+        const reportDate = document.getElementById('reportDate');
+        const reportCategory = document.getElementById('reportCategory');
+        const salesChart = document.getElementById('salesChart');
+        const salesBreakdown = document.getElementById('salesBreakdown');
+        const reportFilterStatus = document.getElementById('reportFilterStatus');
+        const monthFormatter = new Intl.DateTimeFormat('en-PH', { month: 'short' });
+        let currentRows = [];
+        let reportCatalog = [];
+        let reportCatalogError = '';
+        let reportCatalogLoaded = false;
+
+        function formatMoney(value) {
+            return `₱${value.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+        }
+
+        function parseSelectedDate() {
+            const parts = reportDate.value.split('-').map(Number);
+            return new Date(parts[0], parts[1] - 1, parts[2]);
+        }
+
+        function dateKey(date) {
+            const parts = new Intl.DateTimeFormat('en-CA', {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                timeZone: 'Asia/Manila'
+            }).formatToParts(date);
+            const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+            return `${values.year}-${values.month}-${values.day}`;
+        }
+
+        async function loadReportCatalog() {
+            try {
+                const rawCatalog = localStorage.getItem('alboraAdminProducts');
+                if (rawCatalog !== null) {
+                    const savedCatalog = JSON.parse(rawCatalog);
+                    if (!Array.isArray(savedCatalog)) throw new Error('Saved product data is not a list.');
+                    if (savedCatalog.length) {
+                        reportCatalog = savedCatalog;
+                        return;
+                    }
+                }
+                const response = await fetch('catalog-seed.json', { cache: 'no-store' });
+                if (!response.ok) throw new Error(`Catalog request failed with status ${response.status}`);
+                const catalog = await response.json();
+                if (!Array.isArray(catalog)) throw new Error('The starter catalog is not a list.');
+                reportCatalog = catalog;
+            } catch (error) {
+                reportCatalogError = `Product cost and stock details could not be loaded: ${error.message}`;
+            } finally {
+                reportCatalogLoaded = true;
+            }
+        }
+
+        function loadReceipts() {
+            let rawReceipts;
+            try {
+                rawReceipts = localStorage.getItem('alboraPosReceipts');
+            } catch (error) {
+                return { receipts: [], error: 'Could not read completed POS receipts from browser storage.', catalog: [] };
+            }
+            let parsedReceipts = [];
+            let receiptError = '';
+            try {
+                parsedReceipts = rawReceipts ? JSON.parse(rawReceipts) : [];
+            } catch (error) {
+                receiptError = 'Saved POS receipt data is invalid and could not be reported.';
+            }
+            if (!Array.isArray(parsedReceipts)) {
+                parsedReceipts = [];
+                receiptError = 'Saved POS receipt data is not in the expected format.';
+            }
+
+            const receipts = parsedReceipts.filter(receipt =>
+                receipt && typeof receipt.receiptNumber === 'string' &&
+                Number.isFinite(Date.parse(receipt.createdAt)) &&
+                Array.isArray(receipt.items) &&
+                receipt.items.length > 0 &&
+                receipt.items.every(item => item && typeof item.name === 'string' &&
+                    Number.isFinite(item.price) && item.price > 0 &&
+                    Number.isInteger(item.quantity) && item.quantity > 0)
+            );
+            const rejectedCount = parsedReceipts.length - receipts.length;
+            const reportError = [receiptError, rejectedCount > 0 ? `${rejectedCount} invalid POS receipt(s) were excluded from this report.` : ''].filter(Boolean).join(' ');
+            let onlineOrders = [];
+            try {
+                const rawOrders = localStorage.getItem('albora-orders-v1');
+                const parsedOrders = rawOrders ? JSON.parse(rawOrders) : [];
+                if (!Array.isArray(parsedOrders)) throw new Error('Online order data is not in the expected format.');
+                onlineOrders = parsedOrders;
+            } catch (error) {
+                return { receipts, error: [reportError, 'Online order data could not be read.'].filter(Boolean).join(' '), catalog: [] };
+            }
+            let catalog = reportCatalog;
+            try {
+                const parsedCatalog = JSON.parse(localStorage.getItem('alboraAdminProducts') || '[]');
+                if (!Array.isArray(parsedCatalog)) throw new Error('Saved product data is not a list.');
+                if (parsedCatalog.length) catalog = parsedCatalog;
+            } catch (error) {
+                return { receipts, error: [reportError, 'Product categories could not be read from the catalog.'].filter(Boolean).join(' '), catalog: [] };
+            }
+            onlineOrders.forEach(order => {
+                if (!order || order.pay?.product?.status !== 'verified' || !Array.isArray(order.items)) return;
+                const timestamp = Number(order.at);
+                const date = new Date(Number.isFinite(timestamp) ? timestamp : order.at);
+                if (Number.isNaN(date.getTime())) return;
+                const items = order.items.map(item => {
+                    const quantity = Number(item.qty);
+                    const amount = Number(item.amt);
+                    const unit = Number(item.unit);
+                    const price = Number.isFinite(unit) && unit > 0 ? unit :
+                        Number.isFinite(amount) && Number.isInteger(quantity) && quantity > 0 ? amount / quantity : 0;
+                    const product = catalog.find(entry => entry &&
+                        String(entry.name || '').toLowerCase() === String(item.name || '').toLowerCase());
+                    return {
+                        name: String(item.name || 'Online product'),
+                        category: String(product?.cat || item.category || 'Uncategorized'),
+                        quantity,
+                        price
+                    };
+                }).filter(item => Number.isInteger(item.quantity) && item.quantity > 0 && Number.isFinite(item.price) && item.price > 0);
+                if (!items.length) return;
+                receipts.push({
+                    receiptNumber: `ONLINE-${String(order.id || '')}`,
+                    createdAt: date.toISOString(),
+                    items,
+                    discount: 0
+                });
+            });
+            return { receipts, error: reportError, catalog };
+        }
+
+        function receiptLines(receipt) {
+            const receiptGross = receipt.items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+            const discount = Number.isFinite(receipt.discount) ? Math.min(receiptGross, Math.max(0, receipt.discount)) : 0;
+            return receipt.items.map(item => {
+                const gross = item.price * item.quantity;
+                const product = reportCatalog.find(entry =>
+                    (item.productId && entry.id === item.productId) ||
+                    (item.sku && String(entry.sku || '').toLowerCase() === String(item.sku).toLowerCase()) ||
+                    String(entry.name || '').toLowerCase() === String(item.name || '').toLowerCase()
+                );
+                return {
+                    name: item.name,
+                    sku: item.sku || product?.sku || item.name,
+                    category: item.category || product?.cat || 'Uncategorized',
+                    quantity: item.quantity,
+                    unitPrice: Number(item.price) || 0,
+                    unitCost: Math.max(0, Number(item.unitCost ?? item.cost ?? product?.cost) || 0),
+                    unitCostKnown: Number.isFinite(Number(item.unitCost ?? item.cost)) ||
+                        Boolean(product && Number.isFinite(Number(product.cost))),
+                    revenue: Math.max(0, gross - (receiptGross > 0 ? discount * gross / receiptGross : 0))
+                };
+            });
+        }
+
+        function showBusinessChartMessage(container, message) {
+            const empty = document.createElement('p');
+            empty.className = 'text-muted small py-3 mb-0';
+            empty.textContent = message;
+            container.replaceChildren(empty);
+        }
+
+        function renderBusinessVisualization(periodReceipts, allReceipts) {
+            const selector = document.getElementById('businessChartType');
+            const container = document.getElementById('businessVisualization');
+            const title = document.getElementById('businessChartTitle');
+            const description = document.getElementById('businessChartDescription');
+            if (!selector || !container) return;
+            const selectedLines = periodReceipts.flatMap(item => item.lines.filter(line =>
+                !reportCategory.value || line.category === reportCategory.value
+            ));
+            const chartType = selector.value;
+            if (['category', 'waterfall', 'stock', 'pareto'].includes(chartType) && !reportCatalogLoaded) {
+                return showBusinessChartMessage(container, 'Loading product cost and stock data…');
+            }
+
+            if (chartType === 'category') {
+                title.textContent = 'Sales and profit by category';
+                description.textContent = 'Product revenue and gross profit for the selected report period.';
+                const totals = new Map();
+                selectedLines.forEach(line => {
+                    const item = totals.get(line.category) || { category: line.category, sales: 0, cost: 0 };
+                    item.sales += line.revenue;
+                    item.cost += line.unitCost * line.quantity;
+                    totals.set(line.category, item);
+                });
+                const rows = [...totals.values()].sort((first, second) => second.sales - first.sales);
+                if (!rows.length) return showBusinessChartMessage(container, 'No category sales are available for this period.');
+                if (!selectedLines.every(line => line.unitCostKnown)) {
+                    return showBusinessChartMessage(container, 'Product unit costs are missing for some sales, so profit by category cannot be calculated.');
+                }
+                const maximum = Math.max(1, ...rows.map(item => Math.max(item.sales, item.sales - item.cost)));
+                const legend = document.createElement('div');
+                legend.className = 'business-chart-legend';
+                legend.innerHTML = '<span><i class="business-legend-swatch"></i>Sales</span><span><i class="business-legend-swatch profit"></i>Gross profit</span>';
+                const chartRows = rows.map(item => {
+                    const row = document.createElement('div');
+                    row.className = 'business-category-row';
+                    const name = document.createElement('div');
+                    name.className = 'business-category-name';
+                    name.textContent = item.category;
+                    row.appendChild(name);
+                    [
+                        { label: 'Sales', value: item.sales, className: '' },
+                        { label: 'Profit', value: item.sales - item.cost, className: item.sales < item.cost ? 'loss' : 'profit' }
+                    ].forEach(series => {
+                        const line = document.createElement('div');
+                        line.className = 'business-series-row';
+                        const label = document.createElement('span');
+                        label.textContent = series.label;
+                        const track = document.createElement('div');
+                        track.className = 'business-series-track';
+                        const fill = document.createElement('div');
+                        fill.className = `business-series-fill ${series.className}`.trim();
+                        fill.style.width = `${Math.min(100, Math.abs(series.value) / maximum * 100)}%`;
+                        track.appendChild(fill);
+                        const value = document.createElement('span');
+                        value.className = 'business-series-value';
+                        value.textContent = formatMoney(series.value);
+                        line.append(label, track, value);
+                        row.appendChild(line);
+                    });
+                    return row;
+                });
+                container.replaceChildren(legend, ...chartRows);
+                return;
+            }
+
+            if (chartType === 'waterfall') {
+                title.textContent = 'Selling price → unit cost → gross profit';
+                description.textContent = 'Per-unit selling price is net of recorded discounts; unit cost comes from the current product catalog.';
+                if (reportCatalogError) return showBusinessChartMessage(container, reportCatalogError);
+                const products = new Map();
+                selectedLines.forEach(line => {
+                    const item = products.get(line.sku) || {
+                        sku: line.sku, name: line.name, units: 0, revenue: 0, cost: 0
+                    };
+                    item.units += line.quantity;
+                    item.revenue += line.revenue;
+                    item.cost += line.unitCost * line.quantity;
+                    products.set(line.sku, item);
+                });
+                const rows = [...products.values()].sort((first, second) => second.revenue - first.revenue).slice(0, 10);
+                if (!rows.length) return showBusinessChartMessage(container, 'No product sales are available for this period.');
+                if (!selectedLines.every(line => line.unitCostKnown)) {
+                    return showBusinessChartMessage(container, 'Product unit costs are missing for some sales, so the waterfall cannot be calculated.');
+                }
+                const maximum = Math.max(1, ...rows.map(item => Math.max(item.revenue / item.units, item.cost / item.units)));
+                const chartRows = rows.map(item => {
+                    const price = item.revenue / item.units;
+                    const cost = item.cost / item.units;
+                    const profit = price - cost;
+                    const row = document.createElement('div');
+                    row.className = 'waterfall-item';
+                    const name = document.createElement('div');
+                    name.className = 'waterfall-name';
+                    name.textContent = `${item.sku} · ${item.name}`;
+                    const stages = document.createElement('div');
+                    stages.className = 'waterfall-steps';
+                    [
+                        { label: 'Selling price', value: price, left: 0, fill: price },
+                        { label: 'Unit cost', value: cost, left: Math.max(0, price - cost), fill: cost, className: 'cost' },
+                        { label: 'Gross profit', value: profit, left: 0, fill: Math.max(0, profit), className: 'profit' }
+                    ].forEach(stage => {
+                        const step = document.createElement('div');
+                        const stepLabel = document.createElement('div');
+                        stepLabel.className = 'waterfall-step-label';
+                        const label = document.createElement('span');
+                        label.textContent = stage.label;
+                        const value = document.createElement('strong');
+                        value.textContent = formatMoney(stage.value);
+                        stepLabel.append(label, value);
+                        const track = document.createElement('div');
+                        track.className = 'waterfall-track';
+                        const fill = document.createElement('div');
+                        fill.className = `waterfall-fill ${stage.className || ''}`.trim();
+                        fill.style.left = `${Math.min(100, stage.left / maximum * 100)}%`;
+                        fill.style.width = `${Math.min(100, stage.fill / maximum * 100)}%`;
+                        track.appendChild(fill);
+                        step.append(stepLabel, track);
+                        stages.appendChild(step);
+                    });
+                    row.append(name, stages);
+                    return row;
+                });
+                container.replaceChildren(...chartRows);
+                return;
+            }
+
+            if (chartType === 'stock') {
+                title.textContent = 'Stock vs. low-stock threshold';
+                description.textContent = 'The marker shows the reorder threshold; products at or below it need attention.';
+                if (reportCatalogError) return showBusinessChartMessage(container, reportCatalogError);
+                const stockRows = reportCatalog.filter(product => product && !product.archived && product.active !== false &&
+                    (!reportCategory.value || product.cat === reportCategory.value))
+                    .map(product => {
+                        const stock = typeof product.stock === 'number'
+                            ? Math.max(0, product.stock)
+                            : product.stock && typeof product.stock === 'object'
+                                ? Object.values(product.stock).reduce((sum, value) => sum + (Number(value) || 0), 0)
+                                : 0;
+                        const threshold = Math.max(0, Number(product.threshold) || 0);
+                        return { product, stock, threshold, low: stock <= threshold };
+                    })
+                    .sort((first, second) => Number(second.low) - Number(first.low) || first.stock - second.stock)
+                    .slice(0, 20);
+                if (!stockRows.length) return showBusinessChartMessage(container, 'No active catalog products are available.');
+                const maximum = Math.max(1, ...stockRows.flatMap(item => [item.stock, item.threshold]));
+                const chartRows = stockRows.map(item => {
+                    const row = document.createElement('div');
+                    row.className = 'bullet-chart-row';
+                    const name = document.createElement('span');
+                    name.className = 'bullet-name';
+                    name.title = `${item.product.name} · ${item.product.sku || ''}`;
+                    name.textContent = item.product.name;
+                    const track = document.createElement('div');
+                    track.className = 'bullet-track';
+                    const fill = document.createElement('div');
+                    fill.className = `bullet-fill ${item.low ? 'low' : ''}`.trim();
+                    fill.style.width = `${Math.min(100, item.stock / maximum * 100)}%`;
+                    const marker = document.createElement('div');
+                    marker.className = 'bullet-threshold';
+                    marker.style.left = `${Math.min(100, item.threshold / maximum * 100)}%`;
+                    track.append(fill, marker);
+                    track.setAttribute('aria-label', `${item.product.name}: ${item.stock} in stock; threshold ${item.threshold}`);
+                    const value = document.createElement('span');
+                    value.className = 'bullet-value';
+                    value.textContent = `${item.stock} in stock · threshold ${item.threshold}`;
+                    row.append(name, track, value);
+                    return row;
+                });
+                container.replaceChildren(...chartRows);
+                return;
+            }
+
+            if (chartType === 'pareto') {
+                title.textContent = 'Pareto — profit contribution by SKU';
+                description.textContent = 'Top positive gross-profit SKUs, ordered by contribution; cumulative line shows their share of total profit.';
+                const products = new Map();
+                selectedLines.forEach(line => {
+                    const item = products.get(line.sku) || { sku: line.sku, name: line.name, revenue: 0, cost: 0 };
+                    item.revenue += line.revenue;
+                    item.cost += line.unitCost * line.quantity;
+                    products.set(line.sku, item);
+                });
+                const rows = [...products.values()]
+                    .map(item => ({ ...item, profit: item.revenue - item.cost }))
+                    .filter(item => item.profit > 0)
+                    .sort((first, second) => second.profit - first.profit)
+                    .slice(0, 10);
+                if (!selectedLines.every(line => line.unitCostKnown)) {
+                    return showBusinessChartMessage(container, 'Product unit costs are missing for some sales, so SKU profit cannot be calculated.');
+                }
+                if (!rows.length) return showBusinessChartMessage(container, 'No positive gross profit is available for this period.');
+                const total = rows.reduce((sum, item) => sum + item.profit, 0);
+                const width = 960;
+                const height = 330;
+                const margin = { top: 20, right: 64, bottom: 76, left: 70 };
+                const plotWidth = width - margin.left - margin.right;
+                const plotHeight = height - margin.top - margin.bottom;
+                const maximum = Math.max(1, ...rows.map(item => item.profit));
+                const x = index => margin.left + (index + 0.5) * plotWidth / rows.length;
+                const y = value => margin.top + plotHeight - value / maximum * plotHeight;
+                const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+                svg.setAttribute('class', 'pareto-chart');
+                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+                svg.setAttribute('role', 'img');
+                svg.setAttribute('aria-label', 'Pareto chart of gross profit by SKU with cumulative profit percentage.');
+                for (let tick = 0; tick <= 4; tick += 1) {
+                    const ratio = tick / 4;
+                    const yPosition = margin.top + plotHeight * ratio;
+                    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                    line.setAttribute('x1', String(margin.left));
+                    line.setAttribute('x2', String(width - margin.right));
+                    line.setAttribute('y1', String(yPosition));
+                    line.setAttribute('y2', String(yPosition));
+                    line.setAttribute('stroke', '#eee8dc');
+                    svg.appendChild(line);
+                    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    label.setAttribute('x', String(margin.left - 8));
+                    label.setAttribute('y', String(yPosition + 4));
+                    label.setAttribute('text-anchor', 'end');
+                    label.setAttribute('fill', '#7c796f');
+                    label.setAttribute('font-size', '11');
+                    label.textContent = formatMoney(maximum * (1 - ratio));
+                    svg.appendChild(label);
+                    const percent = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    percent.setAttribute('x', String(width - margin.right + 8));
+                    percent.setAttribute('y', String(yPosition + 4));
+                    percent.setAttribute('fill', '#47665b');
+                    percent.setAttribute('font-size', '11');
+                    percent.textContent = `${Math.round((1 - ratio) * 100)}%`;
+                    svg.appendChild(percent);
+                }
+                const barWidth = Math.min(42, plotWidth / rows.length * 0.58);
+                let cumulative = 0;
+                const points = [];
+                rows.forEach((item, index) => {
+                    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+                    rect.setAttribute('x', String(x(index) - barWidth / 2));
+                    rect.setAttribute('y', String(y(item.profit)));
+                    rect.setAttribute('width', String(barWidth));
+                    rect.setAttribute('height', String(Math.max(0, margin.top + plotHeight - y(item.profit))));
+                    rect.setAttribute('rx', '3');
+                    rect.setAttribute('fill', '#c5a038');
+                    const titleElement = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                    titleElement.textContent = `${item.sku} · ${item.name}: ${formatMoney(item.profit)}`;
+                    rect.appendChild(titleElement);
+                    svg.appendChild(rect);
+                    cumulative += item.profit;
+                    points.push(`${index ? 'L' : 'M'} ${x(index)} ${margin.top + plotHeight - cumulative / total * plotHeight}`);
+                    const skuLabel = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                    skuLabel.setAttribute('x', String(x(index)));
+                    skuLabel.setAttribute('y', String(height - 38));
+                    skuLabel.setAttribute('text-anchor', 'end');
+                    skuLabel.setAttribute('transform', `rotate(-35 ${x(index)} ${height - 38})`);
+                    skuLabel.setAttribute('fill', '#7c796f');
+                    skuLabel.setAttribute('font-size', '10');
+                    skuLabel.textContent = item.sku;
+                    svg.appendChild(skuLabel);
+                });
+                const cumulativeLine = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                cumulativeLine.setAttribute('d', points.join(' '));
+                cumulativeLine.setAttribute('fill', 'none');
+                cumulativeLine.setAttribute('stroke', '#47665b');
+                cumulativeLine.setAttribute('stroke-width', '3');
+                cumulativeLine.setAttribute('stroke-linecap', 'round');
+                cumulativeLine.setAttribute('stroke-linejoin', 'round');
+                svg.appendChild(cumulativeLine);
+                const legend = document.createElement('div');
+                legend.className = 'pareto-legend';
+                legend.innerHTML = '<span><i class="profit-key"></i>Gross profit (₱)</span><span><i class="cumulative-key"></i>Cumulative profit (%)</span>';
+                container.replaceChildren(svg, legend);
+                return;
+            }
+
+            title.textContent = 'Sales trend over time';
+            description.textContent = 'Monthly product revenue over the last 12 months, based on completed POS sales and verified online payments.';
+            const months = [];
+            const now = new Date();
+            const today = dateKey(now).split('-').map(Number);
+            for (let index = 11; index >= 0; index -= 1) {
+                const date = new Date(today[0], today[1] - 1 - index, 1);
+                months.push({
+                    key: `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`,
+                    label: date.toLocaleDateString('en-PH', { month: 'short' })
+                });
+            }
+            const totals = new Map(months.map(month => [month.key, 0]));
+            allReceipts.forEach(item => item.lines.forEach(line => {
+                if (reportCategory.value && line.category !== reportCategory.value) return;
+                const key = item.date.slice(0, 7);
+                if (totals.has(key)) totals.set(key, totals.get(key) + line.revenue);
+            }));
+            const values = months.map(month => ({ ...month, revenue: totals.get(month.key) || 0 }));
+            const width = 960;
+            const height = 300;
+            const margin = { top: 20, right: 28, bottom: 40, left: 70 };
+            const plotWidth = width - margin.left - margin.right;
+            const plotHeight = height - margin.top - margin.bottom;
+            const maximum = Math.max(1, ...values.map(item => item.revenue)) * 1.1;
+            const x = index => margin.left + index * plotWidth / (values.length - 1);
+            const y = value => margin.top + plotHeight - value / maximum * plotHeight;
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.setAttribute('class', 'trend-chart');
+            svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            svg.setAttribute('role', 'img');
+            svg.setAttribute('aria-label', 'Line chart showing monthly sales revenue over the last 12 months.');
+            for (let tick = 0; tick <= 4; tick += 1) {
+                const ratio = tick / 4;
+                const yPosition = margin.top + plotHeight * ratio;
+                const grid = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+                grid.setAttribute('x1', String(margin.left));
+                grid.setAttribute('x2', String(width - margin.right));
+                grid.setAttribute('y1', String(yPosition));
+                grid.setAttribute('y2', String(yPosition));
+                grid.setAttribute('stroke', '#eee8dc');
+                svg.appendChild(grid);
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', String(margin.left - 8));
+                label.setAttribute('y', String(yPosition + 4));
+                label.setAttribute('text-anchor', 'end');
+                label.setAttribute('fill', '#7c796f');
+                label.setAttribute('font-size', '11');
+                label.textContent = formatMoney(maximum * (1 - ratio));
+                svg.appendChild(label);
+            }
+            const line = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            line.setAttribute('d', values.map((item, index) => `${index ? 'L' : 'M'} ${x(index)} ${y(item.revenue)}`).join(' '));
+            line.setAttribute('fill', 'none');
+            line.setAttribute('stroke', '#47665b');
+            line.setAttribute('stroke-width', '3');
+            line.setAttribute('stroke-linecap', 'round');
+            line.setAttribute('stroke-linejoin', 'round');
+            svg.appendChild(line);
+            values.forEach((item, index) => {
+                const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+                point.setAttribute('cx', String(x(index)));
+                point.setAttribute('cy', String(y(item.revenue)));
+                point.setAttribute('r', '4');
+                point.setAttribute('fill', '#47665b');
+                const pointTitle = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+                pointTitle.textContent = `${item.key}: ${formatMoney(item.revenue)}`;
+                point.appendChild(pointTitle);
+                svg.appendChild(point);
+                const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+                label.setAttribute('x', String(x(index)));
+                label.setAttribute('y', String(height - 12));
+                label.setAttribute('text-anchor', 'middle');
+                label.setAttribute('fill', '#7c796f');
+                label.setAttribute('font-size', '11');
+                label.textContent = item.label;
+                svg.appendChild(label);
+            });
+            container.replaceChildren(svg);
+        }
+
+        function getReportLabels(selectedDate) {
+            if (reportPeriod.value === 'monthly') {
+                return Array.from({ length: 12 }, (_, index) => {
+                    return monthFormatter.format(new Date(selectedDate.getFullYear(), index, 1));
+                });
+            }
+
+            return Array.from({ length: 24 }, (_, hour) => `${String(hour).padStart(2, '0')}:00`);
+        }
+
+        function receiptHourInManila(receipt) {
+            const hour = new Intl.DateTimeFormat('en-PH', {
+                hour: '2-digit',
+                hourCycle: 'h23',
+                timeZone: 'Asia/Manila'
+            }).format(new Date(receipt.createdAt));
+            return hour;
+        }
+
+        function renderReport() {
+            const isMonthly = reportPeriod.value === 'monthly';
+            const periodLabel = isMonthly ? 'Monthly' : 'Daily';
+            const selectedDate = parseSelectedDate();
+            const labels = getReportLabels(selectedDate);
+            const report = loadReceipts();
+            const selectedDay = dateKey(selectedDate);
+            const selectedMonth = selectedDay.slice(0, 7);
+            const reportReceipts = report.receipts.map(receipt => {
+                const createdAt = new Date(receipt.createdAt);
+                const lines = receiptLines(receipt);
+                return {
+                    receipt,
+                    date: dateKey(createdAt),
+                    lines,
+                    revenue: lines
+                        .filter(line => !reportCategory.value || line.category === reportCategory.value)
+                        .reduce((sum, line) => sum + line.revenue, 0)
+                };
+            }).filter(item => !reportCategory.value ||
+                item.lines.some(line => line.category === reportCategory.value));
+            const periodReceipts = reportReceipts.filter(item =>
+                isMonthly ? item.date.slice(0, 7) === selectedMonth : item.date === selectedDay
+            );
+            const periodRevenue = periodReceipts.reduce((sum, item) => sum + item.revenue, 0);
+            renderBusinessVisualization(periodReceipts, reportReceipts);
+
+            document.getElementById('chartTitle').textContent = isMonthly
+                ? 'Monthly product sales (₱)'
+                : `Daily product sales by hour (₱) · ${selectedDay}`;
+            document.getElementById('categoryChartTitle').textContent =
+                `${periodLabel} category sales for ${isMonthly ? monthFormatter.format(selectedDate) : selectedDay}`;
+            document.getElementById('productChartTitle').textContent =
+                `Top and least sold products by category · ${isMonthly ? monthFormatter.format(selectedDate) : selectedDay}`;
+            document.getElementById('breakdownTitle').textContent = `${periodLabel} sales breakdown`;
+            salesChart.classList.toggle('monthly', isMonthly);
+            salesChart.classList.toggle('hourly', !isMonthly);
+            salesChart.replaceChildren();
+            const chartTotals = new Map();
+            const chartKeys = isMonthly
+                ? Array.from({ length: 12 }, (_, index) => `${selectedDate.getFullYear()}-${String(index + 1).padStart(2, '0')}`)
+                : Array.from({ length: 24 }, (_, hour) => `${selectedDay}T${String(hour).padStart(2, '0')}`);
+            reportReceipts.forEach(item => {
+                const key = isMonthly
+                    ? item.date.slice(0, 7)
+                    : `${item.date}T${receiptHourInManila(item.receipt)}`;
+                chartTotals.set(key, (chartTotals.get(key) || 0) + item.revenue);
+            });
+            const maxChartValue = Math.max(...chartKeys.map(key => chartTotals.get(key) || 0), 0);
+            labels.forEach((label, index) => {
+                const amount = chartTotals.get(chartKeys[index]) || 0;
+                const wrapper = document.createElement('div');
+                wrapper.className = 'bar-wrapper';
+                const bar = document.createElement('div');
+                bar.className = 'bar';
+                bar.style.height = maxChartValue > 0 && amount > 0 ? `${Math.max(4, amount / maxChartValue * 100)}%` : '0%';
+                bar.setAttribute('aria-label', `${label}: ${formatMoney(amount)}`);
+                const caption = document.createElement('div');
+                caption.className = 'bar-label';
+                caption.textContent = label;
+                wrapper.append(bar, caption);
+                salesChart.append(wrapper);
+            });
+
+            const selectedPeriodReceipts = report.receipts.map(receipt => ({
+                receipt,
+                lines: receiptLines(receipt).filter(line => !reportCategory.value || line.category === reportCategory.value),
+                date: dateKey(new Date(receipt.createdAt))
+            })).filter(item => isMonthly
+                ? item.date.slice(0, 7) === selectedMonth
+                : item.date === selectedDay);
+            const categoryTotals = new Map();
+            const productTotals = new Map();
+            selectedPeriodReceipts.forEach(item => item.lines.forEach(line => {
+                categoryTotals.set(line.category, (categoryTotals.get(line.category) || 0) + line.revenue);
+                const key = `${line.category}\u0000${line.name}`;
+                const product = productTotals.get(key) || { category: line.category, name: line.name, quantity: 0, revenue: 0 };
+                product.quantity += line.quantity;
+                product.revenue += line.revenue;
+                productTotals.set(key, product);
+            }));
+
+            const knownCategories = ['Accessories', 'Alborá Men', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume', 'Perfume Women', 'Uncategorized'];
+            const categories = reportCategory.value
+                ? [reportCategory.value]
+                : [...new Set([...knownCategories, ...categoryTotals.keys()])];
+            const maxCategoryRevenue = Math.max(...categories.map(category => categoryTotals.get(category) || 0), 0);
+            const categorySalesChart = document.getElementById('categorySalesChart');
+            categorySalesChart.replaceChildren();
+            categories.forEach(category => {
+                const revenue = categoryTotals.get(category) || 0;
+                const item = document.createElement('div');
+                item.className = 'category-chart-item';
+                const heading = document.createElement('div');
+                heading.className = 'category-chart-heading';
+                const name = document.createElement('span');
+                name.textContent = category;
+                const total = document.createElement('span');
+                total.textContent = formatMoney(revenue);
+                const track = document.createElement('div');
+                track.className = 'category-chart-track';
+                const fill = document.createElement('div');
+                fill.className = 'category-chart-fill';
+                fill.style.width = maxCategoryRevenue > 0 ? `${revenue / maxCategoryRevenue * 100}%` : '0%';
+                track.setAttribute('aria-label', `${category}: ${formatMoney(revenue)}`);
+                track.append(fill);
+                heading.append(name, total);
+                item.append(heading, track);
+                categorySalesChart.append(item);
+            });
+
+            const categoryProductChart = document.getElementById('categoryProductChart');
+            categoryProductChart.replaceChildren();
+            categories.forEach(category => {
+                const products = [...productTotals.values()]
+                    .filter(product => product.category === category)
+                    .sort((first, second) => second.quantity - first.quantity || first.name.localeCompare(second.name));
+                const card = document.createElement('div');
+                card.className = 'product-ranking-item';
+                const heading = document.createElement('div');
+                heading.className = 'product-ranking-heading';
+                heading.textContent = category;
+                card.append(heading);
+                if (products.length === 0) {
+                    const empty = document.createElement('div');
+                    empty.className = 'form-text';
+                    empty.textContent = 'No sales recorded in this period.';
+                    card.append(empty);
+                } else {
+                    const rankings = [
+                        { label: 'Top seller', product: products[0], className: '' },
+                        { label: 'Least sold', product: products[products.length - 1], className: 'least' }
+                    ];
+                    rankings.forEach(ranking => {
+                        const row = document.createElement('div');
+                        row.className = 'product-ranking-row';
+                        const label = document.createElement('div');
+                        label.className = 'product-ranking-label';
+                        const productName = document.createElement('span');
+                        productName.textContent = `${ranking.label}: ${ranking.product.name}`;
+                        const quantity = document.createElement('span');
+                        quantity.textContent = `${ranking.product.quantity} sold`;
+                        label.append(productName, quantity);
+                        const track = document.createElement('div');
+                        track.className = 'ranking-track';
+                        const fill = document.createElement('div');
+                        fill.className = `ranking-fill ${ranking.className}`.trim();
+                        fill.style.width = `${Math.max(4, ranking.product.quantity / products[0].quantity * 100)}%`;
+                        track.append(fill);
+                        row.append(label, track);
+                        card.append(row);
+                    });
+                }
+                categoryProductChart.append(card);
+            });
+
+            document.getElementById('reportProductSales').textContent =
+                periodRevenue.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            document.getElementById('reportPaidOrders').textContent = String(periodReceipts.length);
+            document.getElementById('reportAverageOrder').textContent = (periodReceipts.length
+                ? periodRevenue / periodReceipts.length
+                : 0).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+            salesBreakdown.replaceChildren();
+            currentRows = [];
+            if (periodReceipts.length === 0) {
+                const emptyRow = document.createElement('tr');
+                const emptyCell = document.createElement('td');
+                emptyCell.colSpan = 4;
+                emptyCell.className = 'text-center text-muted py-4';
+                emptyCell.textContent = report.error || (reportCategory.value
+                    ? `No ${reportCategory.value} sales recorded for this ${isMonthly ? 'month' : 'date'}.`
+                    : `No sales recorded for this ${isMonthly ? 'month' : 'date'}.`);
+                emptyRow.append(emptyCell);
+                salesBreakdown.append(emptyRow);
+            } else {
+                const breakdown = new Map();
+                periodReceipts.forEach(item => {
+                    item.lines
+                        .filter(line => !reportCategory.value || line.category === reportCategory.value)
+                        .forEach(line => {
+                            const key = `${item.date}\u0000${line.category}`;
+                            const row = breakdown.get(key) || {
+                                date: item.date,
+                                category: line.category,
+                                orders: new Set(),
+                                revenue: 0
+                            };
+                            row.orders.add(item.receipt.receiptNumber);
+                            row.revenue += line.revenue;
+                            breakdown.set(key, row);
+                        });
+                });
+                currentRows = [...breakdown.values()]
+                    .sort((first, second) => first.date.localeCompare(second.date) || first.category.localeCompare(second.category))
+                    .map(row => ({ date: row.date, category: row.category, orders: row.orders.size, revenue: row.revenue }));
+                currentRows.forEach(item => {
+                    const row = document.createElement('tr');
+                    [item.date, item.category, String(item.orders), formatMoney(item.revenue)].forEach(value => {
+                        const cell = document.createElement('td');
+                        cell.textContent = value;
+                        row.append(cell);
+                    });
+                    salesBreakdown.append(row);
+                });
+            }
+            const chosenCategory = reportCategory.value || 'all categories';
+            const demoSalesNote = report.receipts.some(receipt => receipt.demo === true)
+                ? ' Demo POS transactions are included in these figures.'
+                : '';
+            reportFilterStatus.textContent = (report.error
+                ? `${report.error} Showing ${periodLabel.toLowerCase()} report for ${chosenCategory}.`
+                : `Showing ${periodLabel.toLowerCase()} report for ${chosenCategory}. ${periodReceipts.length} recognized order(s) in this period.`) + demoSalesNote;
+        }
+
+        document.getElementById('applyReportFilters').addEventListener('click', renderReport);
+        document.getElementById('exportReport').addEventListener('click', () => {
+            const selectedDate = reportDate.value;
+            const category = reportCategory.value || 'All categories';
+            const lines = [
+                'Sales report',
+                `Period,${reportPeriod.value}`,
+                `Date,${selectedDate}`,
+                `Category,${category}`,
+                'Date,Category,Orders,Total revenue',
+                ...currentRows.map(item => `${item.date},${item.category},${item.orders},${item.revenue.toFixed(2)}`)
+            ];
+            if (currentRows.length === 0) lines.push('No sales recorded');
+            const file = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
+            const url = URL.createObjectURL(file);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `albora-sales-${reportPeriod.value}-${selectedDate}.csv`;
+            document.body.append(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        });
+
+        reportPeriod.addEventListener('change', renderReport);
+        reportCategory.addEventListener('change', renderReport);
+        reportDate.addEventListener('change', renderReport);
+        document.getElementById('businessChartType').addEventListener('change', renderReport);
+        window.addEventListener('storage', event => {
+            if (event.key === 'alboraAdminProducts') {
+                try {
+                    const catalog = JSON.parse(event.newValue || '[]');
+                    if (!Array.isArray(catalog)) throw new Error('Saved product data is not a list.');
+                    reportCatalog = catalog;
+                    reportCatalogError = '';
+                } catch (error) {
+                    reportCatalog = [];
+                    reportCatalogError = `Product cost and stock details could not be loaded: ${error.message}`;
+                }
+                reportCatalogLoaded = true;
+            }
+            if (['alboraPosReceipts', 'albora-orders-v1', 'alboraAdminProducts'].includes(event.key)) renderReport();
+        });
+        window.addEventListener('albora:demo-receipts-seeded', renderReport);
+        reportDate.value = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
+        loadReportCatalog().then(renderReport);
+    </script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Admin Login</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Lato', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            color: var(--text-dark);
+        }
+
+        .auth-card {
+            background: var(--surface);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            padding: 40px 50px;
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .brand-logo-img {
+            max-width: 245px;
+            height: auto;
+            margin-bottom: 15px;
+        }
+
+        .brand-subtitle {
+            font-size: 0.75rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .form-control {
+            background-color: #FFF8E8;
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 12px 15px;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: var(--alborá-gold);
+            background-color: var(--surface);
+        }
+
+        .form-control::placeholder {
+            color: #B0B0B0;
+            font-weight: 300;
+        }
+
+        .btn-gold {
+            background-color: var(--alborá-gold);
+            color: white;
+            border-radius: 50px;
+            padding: 12px;
+            width: 100%;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            border: none;
+            margin-top: 10px;
+            transition: background-color 0.3s;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+
+        .auth-link {
+            color: var(--alborá-gold);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .auth-link:hover {
+            color: var(--alborá-gold-hover);
+            text-decoration: underline;
+        }
+
+        .bottom-text {
+            margin-top: 25px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .view-section {
+            display: none;
+        }
+        .view-section.active {
+            display: block;
+            animation: fadeIn 0.4s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .instruction-text {
+            font-size: 0.9rem;
+            color: var(--text-light);
+            margin-bottom: 25px;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+            font-size: 0.85rem;
+        }
+
+        .error-box {
+            display: none;
+            background-color: #FDE8E8;
+            color: #B42318;
+            border: 1px solid #F5C2C7;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+
+        .error-box.show {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Admin Login -->
+
+    <!-- Login and account forms -->
+    <div class="auth-card">
+
+        <div id="view-login" class="view-section active">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="brand-logo-img">
+            <div class="brand-subtitle">Admin &amp; Staff Portal</div>
+
+            <!-- Form controls -->
+            <form id="loginForm" autocomplete="on">
+                <input type="text" class="form-control" name="username" id="loginUsername" placeholder="Username" autocomplete="username" required>
+                <input type="password" class="form-control" name="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required>
+                <label class="visually-hidden" for="loginRole">Workspace role</label>
+                <select id="loginRole" class="form-control" name="role" required aria-label="Workspace role">
+                    <option value="admin">Admin</option>
+                    <option value="staff">Staff</option>
+                </select>
+
+                <div id="loginError" class="error-box" role="alert" aria-live="polite"></div>
+                <div class="text-end mb-3">
+                    <a href="#" class="auth-link" onclick="switchView('view-forgot'); return false;">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn btn-gold">Login</button>
+            </form>
+
+            <div class="bottom-text">
+                Don't have an account? <a href="#" class="auth-link" onclick="switchView('view-signup'); return false;">Sign Up</a>
+            </div>
+        </div>
+
+        <div id="view-signup" class="view-section">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="brand-logo-img">
+            <div class="brand-subtitle">Create Account</div>
+
+            <!-- Form controls -->
+            <form id="signupForm">
+                <input type="text" class="form-control" placeholder="Full Name" required>
+                <input type="email" class="form-control" placeholder="Work Email" required>
+                <input type="password" class="form-control" placeholder="Password" required>
+                <input type="password" class="form-control" placeholder="Confirm Password" required>
+
+                <button type="submit" class="btn btn-gold">Create Account</button>
+            </form>
+
+            <div class="bottom-text">
+                Already have an account? <a href="#" class="auth-link" onclick="switchView('view-login'); return false;">Login</a>
+            </div>
+        </div>
+
+        <div id="view-forgot" class="view-section">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="brand-logo-img">
+            <div class="brand-subtitle">Forgot Password?</div>
+
+            <p class="instruction-text">
+                Enter your work email and we'll send you a password reset link.
+            </p>
+
+            <!-- Form controls -->
+            <form id="forgotForm">
+                <input type="email" class="form-control" placeholder="Work Email" required>
+                <button type="submit" class="btn btn-gold">Send Reset Link</button>
+            </form>
+
+            <div class="mt-3">
+                <a href="#" class="auth-link back-link" onclick="switchView('view-login'); return false;">
+                    &larr; Back to Login
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bootstrap interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+
+    <!-- Page-specific JavaScript -->
+    <script>
+        function switchView(viewId) {
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(view => view.classList.remove('active'));
+
+            const selectedView = document.getElementById(viewId);
+            if (selectedView) selectedView.classList.add('active');
+
+            const errorBox = document.getElementById('loginError');
+            if (errorBox) {
+                errorBox.textContent = '';
+                errorBox.classList.remove('show');
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Admin Logout</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            background-color: var(--bg-cream);
+            color: var(--text-dark);
+            font-family: 'Lato', sans-serif;
+        }
+
+        .logout-card {
+            width: min(100% - 2rem, 450px);
+            padding: 40px 50px;
+            border-radius: 20px;
+            background: var(--surface);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .brand-logo {
+            max-width: 220px;
+            height: auto;
+            margin-bottom: 25px;
+        }
+
+        .logout-message {
+            margin-bottom: 25px;
+            color: var(--text-light);
+        }
+
+        .btn-gold {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 50px;
+            background-color: var(--alborá-gold);
+            color: white;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Admin Logout -->
+    <!-- Logout status and next action -->
+    <main class="logout-card">
+        <!-- Alborá brand logo -->
+        <img src="alborá-logo.png" alt="Alborá Logo" class="brand-logo">
+        <!-- Logout confirmation message -->
+        <h1 class="h4 mb-3">You have been logged out</h1>
+        <!-- Session status details -->
+        <p class="logout-message">Your admin session has ended.</p>
+        <!-- Return-to-login action -->
+        <a href="admin_login.html" class="btn btn-gold">Return to admin login</a>
+    </main>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

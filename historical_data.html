@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALBORÁ - Historical Data</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--alborá-gold);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo-container {
+            text-align: center;
+            padding: 20px 25px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-logo {
+            max-width: 155px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu li.active a {
+            border-left: 4px solid white;
+            padding-left: 21px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 20px 25px 10px;
+            letter-spacing: 1px;
+        }
+
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+            
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .breadcrumb-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .user-info {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        
+        .user-info span {
+            color: var(--text-light);
+            margin: 0 5px;
+        }
+
+        .page-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        
+        .btn-gold {
+            background-color: var(--alborá-gold);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 700;
+            border: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+        
+        .btn-outline-custom {
+            background-color: var(--surface);
+            color: var(--text-dark);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #FFF8E8;
+        }
+
+        
+        .stat-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            height: 100%;
+        }
+
+        .stat-title {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: baseline;
+        }
+
+        .stat-currency {
+            font-size: 1rem;
+            margin-right: 2px;
+            font-weight: 700;
+        }
+
+        .stat-desc {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        
+        .filter-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            align-items: center;
+        }
+
+        .search-input {
+            width: 300px;
+            position: relative;
+        }
+        
+        .search-input input {
+            padding-left: 35px;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+            background-color: var(--surface);
+            font-size: 0.85rem;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-light);
+        }
+
+        .filter-select {
+            width: 130px;
+            border-radius: 8px;
+            border: 1px solid #E0E0E0;
+            background-color: var(--surface);
+            color: var(--text-dark);
+            font-size: 0.85rem;
+        }
+
+        
+        .section-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        
+        .table-custom {
+            margin-bottom: 0;
+        }
+
+        .table-custom th {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            font-weight: 400;
+            border-bottom: 1px solid #EAEAEA;
+            padding: 15px;
+            background-color: #FFF8E8;
+        }
+
+        .table-custom td {
+            font-size: 0.9rem;
+            vertical-align: middle;
+            padding: 15px;
+            border-bottom: 1px solid #FFF8E8;
+        }
+        
+        .table-custom tr:last-child td {
+            border-bottom: none;
+        }
+
+        .table-responsive {
+            border: 1px solid #EAEAEA;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .pagination-text {
+            font-size: 0.8rem;
+            color: var(--text-light);
+        }
+
+        
+        .info-box {
+            background-color: #F4F7F6;
+            border: 1px solid #E0E6E3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .info-box-icon {
+            margin-right: 10px;
+            font-size: 1.1rem;
+        }
+        
+        .info-box strong {
+            color: var(--text-dark);
+            display: block;
+            margin-bottom: 2px;
+        }
+
+        
+        .pill-badge-archived {
+            background-color: #F4F7F6;
+            color: var(--text-light);
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .review-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            color: var(--text-light);
+        }
+        
+        .review-row strong {
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+        
+        .panel-text {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Historical Data -->
+
+    
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div class="sidebar-logo-container">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="sidebar-logo">
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="dashboard_admin.html">Overview</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="alerts_stock.html">Inventory</a></li>
+            <li><a href="order_list.html">Orders</a></li>
+            <li><a href="product_payment_proof.html">Payment verification</a></li>
+            <li><a href="two_stage_payment.html">Two-stage payments</a></li>
+            <li><a href="point_of_sales.html">Point of sale</a></li>
+            <li><a href="transaction_list.html">Transactions</a></li>
+            <li><a href="sales.html">Reports</a></li>
+            <li><a href="business_analytics.html">Business analytics</a></li>
+            <li class="active"><a href="historical_data.html">Historical data</a></li>
+            <li><a href="system_settings.html">System settings</a></li>
+            
+            <li><a href="user%20%26%20permissions.html">Users & permissions</a></li>
+            <li><a href="backup%20%26%20data%20recovery.html">Backup & recovery</a></li>
+        </ul>
+    </div>
+
+    
+    <!-- Main admin workspace -->
+    <div class="main-content">
+        
+        <!-- Page header and account controls -->
+        <div class="topbar">
+            <div class="breadcrumb-text">Workspace / Historical data</div>
+            <div class="user-info d-flex align-items-center gap-3">
+                <span>Admin access</span>
+                <a href="admin_logout.html" style="color: #C5A038; text-decoration: none;">Log out</a>
+            </div>
+        </div>
+
+        
+        <!-- Page content area -->
+        <div class="page-content">
+            
+            
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                    <h1 class="page-title">Your business, remembered.</h1>
+                    <div class="page-subtitle">Long-term sales, orders, payments and transactions · Read-only archive</div>
+                </div>
+                <button class="btn btn-gold">Export selected records</button>
+            </div>
+
+            
+            <div class="row g-4 mb-4">
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Archived sales</div>
+                        <div class="stat-value"><span class="stat-currency">₱</span>0</div>
+                        <div class="stat-desc">Recognized product revenue</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Completed orders</div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-desc">Online & walk-in combined</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Payment records</div>
+                        <div class="stat-value">0</div>
+                        <div class="stat-desc">Product + shipping collections</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stat-card">
+                        <div class="stat-title">Retention</div>
+                        <div class="stat-value">7 years</div>
+                        <div class="stat-desc">Policy set by your administrator</div>
+                    </div>
+                </div>
+            </div>
+
+            
+            <div class="filter-bar">
+                <div class="search-input">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="form-control" placeholder="Search order, customer, receipt or ref">
+                </div>
+                <select class="form-select filter-select">
+                    <option>All records</option>
+                </select>
+                <select class="form-select filter-select">
+                    <option>Select year</option>
+                </select>
+                <select class="form-select filter-select">
+                    <option>Record type &darr;</option>
+                </select>
+            </div>
+
+            <div class="row g-4">
+                
+                <div class="col-lg-8">
+                    <!-- Content section -->
+                    <div class="section-card">
+                        <h5 class="section-title">Historical records</h5>
+                        
+                        <div class="table-responsive">
+                            <!-- Data table -->
+                            <table class="table table-custom table-borderless">
+                                <thead>
+                                    <tr>
+                                        <th>Record</th>
+                                        <th>Type</th>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Amount</th>
+                                        <th>State</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="6" class="text-center text-muted py-4">No historical records yet</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="pagination-text mt-3">0 archived records</div>
+                    </div>
+                </div>
+
+                
+                <div class="col-lg-4">
+                    <!-- Content section -->
+                    <div class="section-card">
+                        <h5 class="section-title">Selected record</h5>
+                        <span class="pill-badge-archived">No record selected</span>
+                        
+                        <div class="review-row mt-3">
+                            <span>Product subtotal</span>
+                            <strong>₱0.00</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>J&T shipping</span>
+                            <strong>₱0.00</strong>
+                        </div>
+                        <div class="review-row mb-4">
+                            <span>Total collected</span>
+                            <strong>₱0.00</strong>
+                        </div>
+                        
+                        <div class="review-row">
+                            <span>Customer</span>
+                            <strong>—</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Stage 1</span>
+                            <strong>—</strong>
+                        </div>
+                        <div class="review-row mb-4">
+                            <span>Stage 2</span>
+                            <strong>—</strong>
+                        </div>
+                        
+                        <div class="panel-text">Select a record to view its archived details.</div>
+                        
+                        <button class="btn btn-gold w-100 mb-2" disabled>View archived order</button>
+                        <button class="btn btn-outline-custom" disabled>Download record bundle</button>
+                    </div>
+                </div>
+            </div>
+            
+            
+            <div class="info-box mt-4">
+                <div class="info-box-icon">ℹ️</div>
+                <div>
+                    <strong>History stays intact</strong>
+                    Editing or deleting catalog products does not alter completed orders, receipts, recorded costs, or payment history.
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    <!-- Bootstrap interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

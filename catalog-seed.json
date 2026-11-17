@@ -1,0 +1,1272 @@
+[
+  {
+    "id": "pendant",
+    "name": "Aurelia Pendant Necklace",
+    "cat": "Jewelry",
+    "type": "Pendants",
+    "metal": [
+      "Gold"
+    ],
+    "sub": "Women",
+    "price": 4290,
+    "was": 5200,
+    "sold": 980,
+    "rating": 4.9,
+    "isNew": true,
+    "hue": 44,
+    "s": 46,
+    "variant": {
+      "label": "Length",
+      "opts": [
+        "16 in",
+        "18 in",
+        "20 in"
+      ]
+    },
+    "desc": "A 18k gold-plated pendant on a fine chain, finished with a polished cubic zirconia. Hypoallergenic and tarnish-resistant.",
+    "img": "",
+    "sku": "ALB-PENDANT",
+    "cost": 1502,
+    "threshold": 5,
+    "stock": 12,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "pearl",
+    "name": "Solène Pearl Drop Earrings",
+    "cat": "Jewelry",
+    "type": "Earrings",
+    "metal": [
+      "Gold",
+      "Silver"
+    ],
+    "gold": [
+      "Bangkok Gold"
+    ],
+    "sub": "Women",
+    "price": 1890,
+    "sold": 2100,
+    "rating": 4.8,
+    "hue": 38,
+    "s": 34,
+    "variant": {
+      "label": "Finish",
+      "opts": [
+        "Gold",
+        "Silver"
+      ]
+    },
+    "desc": "Freshwater pearl drops on sterling silver posts. Light enough for all-day wear.",
+    "img": "",
+    "sku": "ALB-PEARL",
+    "cost": 662,
+    "threshold": 5,
+    "stock": 15,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "ring",
+    "name": "Éclat Signet Ring",
+    "cat": "Jewelry",
+    "type": "Ring",
+    "metal": [
+      "Gold"
+    ],
+    "sub": "Unisex",
+    "price": 1590,
+    "sold": 760,
+    "rating": 4.8,
+    "hue": 42,
+    "s": 44,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ]
+    },
+    "desc": "A polished gold-plated signet ring with a smooth oval face. Stacks well with thinner bands.",
+    "img": "",
+    "sku": "ALB-RING",
+    "cost": 556,
+    "threshold": 5,
+    "stock": {
+      "5": 6,
+      "6": 8,
+      "7": 10,
+      "8": 5,
+      "9": 3
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "clamp",
+    "name": "Perle Hair Claw Clamp",
+    "cat": "Accessories",
+    "type": "Hair Clamp",
+    "price": 390,
+    "sold": 2900,
+    "rating": 4.8,
+    "hue": 30,
+    "s": 30,
+    "variant": {
+      "label": "Color",
+      "opts": [
+        "Sand",
+        "Mocha",
+        "Ivory"
+      ]
+    },
+    "desc": "A matte claw clamp with a strong grip. Holds thick hair without pulling.",
+    "img": "",
+    "sku": "ALB-CLAMP",
+    "cost": 136,
+    "threshold": 5,
+    "stock": 40,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "chain",
+    "name": "Marco Curb Chain Necklace",
+    "cat": "Jewelry",
+    "type": "Necklace",
+    "metal": [
+      "Gold"
+    ],
+    "sub": "Men",
+    "price": 2490,
+    "was": 2990,
+    "sold": 1180,
+    "rating": 4.8,
+    "isNew": true,
+    "hue": 42,
+    "s": 30,
+    "variant": {
+      "label": "Length",
+      "opts": [
+        "18 in"
+      ]
+    },
+    "desc": "A weighty curb chain in 18k gold-plated stainless steel. Tarnish-resistant and comfortable against the skin.",
+    "img": "",
+    "sku": "ALB-CHAIN",
+    "cost": 872,
+    "threshold": 5,
+    "stock": 9,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "bracelet",
+    "name": "Orion Link Bracelet",
+    "cat": "Jewelry",
+    "type": "Bracelet",
+    "bracelet": "Silver Bracelet",
+    "metal": [
+      "Silver"
+    ],
+    "sub": "Men",
+    "price": 1790,
+    "sold": 940,
+    "rating": 4.8,
+    "hue": 38,
+    "s": 26,
+    "novar": true,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "1 bracelet"
+      ]
+    },
+    "desc": "A flat-link bracelet with a secure box clasp. Sits neatly under a shirt cuff.",
+    "img": "",
+    "sku": "ALB-BRACELET",
+    "cost": 626,
+    "threshold": 5,
+    "stock": 11,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "mring",
+    "name": "Lucan Signet Ring",
+    "cat": "Jewelry",
+    "type": "Ring",
+    "metal": [
+      "Gold"
+    ],
+    "sub": "Men",
+    "price": 1990,
+    "sold": 710,
+    "rating": 4.7,
+    "hue": 46,
+    "s": 34,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "8",
+        "9",
+        "10",
+        "11",
+        "12"
+      ]
+    },
+    "desc": "A brushed-gold signet with a flat square face, made to be worn every day.",
+    "img": "",
+    "sku": "ALB-MRING",
+    "cost": 696,
+    "threshold": 5,
+    "stock": {
+      "8": 4,
+      "9": 6,
+      "10": 7,
+      "11": 3,
+      "12": 2
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "edp",
+    "name": "Alborá No. 1 Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Unisex",
+    "price": 70,
+    "sold": 1560,
+    "rating": 4.9,
+    "isNew": true,
+    "hue": 150,
+    "s": 28,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "Our signature scent for everyone: bergamot, white tea and amber. Long lasting, 18% fragrance oil. The 10 ml spray fits in any bag.",
+    "img": "",
+    "sku": "ALB-EDP",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 30,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "santal",
+    "name": "Santal Mint Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Unisex",
+    "price": 70,
+    "sold": 820,
+    "rating": 4.8,
+    "hue": 155,
+    "s": 26,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "Creamy sandalwood lifted by cool mint and soft musk. Calm, clean and easy to wear every day.",
+    "img": "",
+    "sku": "ALB-SANTAL",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 25,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "fleur",
+    "name": "Fleur Blanche Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Women",
+    "price": 70,
+    "sold": 1940,
+    "rating": 4.9,
+    "isNew": true,
+    "hue": 50,
+    "s": 42,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "White jasmine and ripe pear over a warm vanilla base. Bright, feminine and elegant.",
+    "img": "",
+    "sku": "ALB-FLEUR",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 28,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "mist",
+    "name": "Rosée Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Women",
+    "price": 70,
+    "sold": 3400,
+    "rating": 4.7,
+    "hue": 160,
+    "s": 24,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "A light, fresh blend of green tea and soft rose. Easy to reapply through the day.",
+    "img": "",
+    "sku": "ALB-MIST",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 35,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "noir",
+    "name": "Noir Ambré Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Men",
+    "price": 70,
+    "sold": 1210,
+    "rating": 4.8,
+    "hue": 25,
+    "s": 32,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "Warm amber, cedar and black pepper. Deep, polished and made for evenings.",
+    "img": "",
+    "sku": "ALB-NOIR",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 22,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "vetiver",
+    "name": "Vétiver Gold Eau de Parfum",
+    "cat": "Perfume",
+    "gifts": true,
+    "sub": "Men",
+    "price": 70,
+    "sold": 930,
+    "rating": 4.7,
+    "hue": 140,
+    "s": 30,
+    "variant": {
+      "label": "Size",
+      "opts": [
+        "10 ml spray",
+        "30 ml",
+        "50 ml"
+      ],
+      "prices": [
+        70,
+        200,
+        300
+      ]
+    },
+    "desc": "Fresh vetiver, citrus and tonka bean. A clean, confident scent for daytime.",
+    "img": "",
+    "sku": "ALB-VETIVER",
+    "cost": 24,
+    "threshold": 5,
+    "stock": 18,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "ready-s",
+    "name": "Single Flower · Small",
+    "cat": "Flowers",
+    "ready": true,
+    "price": 150,
+    "sold": 0,
+    "rating": 5,
+    "isNew": true,
+    "hue": 48,
+    "s": 48,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "1 flower"
+      ]
+    },
+    "desc": "A single flower, wrapped and ready to give. Already made by our florist.",
+    "img": "",
+    "sku": "ALB-READY-S",
+    "cost": 52,
+    "threshold": 5,
+    "stock": 10,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "ready-b",
+    "name": "Single Flower · Big",
+    "cat": "Flowers",
+    "ready": true,
+    "price": 200,
+    "sold": 0,
+    "rating": 5,
+    "isNew": true,
+    "hue": 48,
+    "s": 48,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "1 flower"
+      ]
+    },
+    "desc": "A single, fuller flower, wrapped and ready to give. Already made by our florist.",
+    "img": "",
+    "sku": "ALB-READY-B",
+    "cost": 70,
+    "threshold": 5,
+    "stock": 8,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "ready-m",
+    "name": "Medium Bouquet · 4 Stems",
+    "cat": "Flowers",
+    "ready": true,
+    "price": 350,
+    "sold": 0,
+    "rating": 5,
+    "isNew": true,
+    "hue": 48,
+    "s": 48,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "4 stems"
+      ]
+    },
+    "desc": "A hand-tied bouquet of 4 stems, wrapped and ready to give. Already made by our florist.",
+    "img": "",
+    "sku": "ALB-READY-M",
+    "cost": 122,
+    "threshold": 5,
+    "stock": 5,
+    "active": true,
+    "featured": true
+  },
+  {
+    "id": "peony",
+    "name": "Sunlit Peony Bouquet",
+    "cat": "Flowers",
+    "ready": true,
+    "price": 2490,
+    "sold": 640,
+    "rating": 4.9,
+    "hue": 48,
+    "s": 48,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "Hand-tied bouquet"
+      ]
+    },
+    "desc": "Seasonal peonies and garden roses, hand-tied and wrapped in brown paper with a satin ribbon. Delivered fresh in 1–2 days.",
+    "img": "",
+    "sku": "ALB-PEONY",
+    "cost": 872,
+    "threshold": 5,
+    "stock": 4,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "eucalyptus",
+    "name": "Eucalyptus & Rose Box",
+    "cat": "Flowers",
+    "ready": true,
+    "price": 3290,
+    "was": 3790,
+    "sold": 410,
+    "rating": 4.8,
+    "hue": 140,
+    "s": 26,
+    "variant": {
+      "label": "Includes",
+      "opts": [
+        "Gift box"
+      ]
+    },
+    "desc": "Roses and silver-dollar eucalyptus arranged in a keepsake gift box. Add a handwritten card at checkout.",
+    "img": "",
+    "sku": "ALB-EUCALYPTUS",
+    "cost": 1152,
+    "threshold": 5,
+    "stock": 3,
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "lipstick",
+    "name": "Velvet Matte",
+    "cat": "Cosmetics",
+    "type": "Velvet Matte",
+    "price": 990,
+    "sold": 4200,
+    "rating": 4.8,
+    "hue": 24,
+    "s": 34,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Penelope",
+        "Olivia",
+        "Verity",
+        "Aurelia",
+        "Eleanor"
+      ]
+    },
+    "desc": "A soft-focus velvet matte finish with a creamy feel. Choose your shade.",
+    "img": "",
+    "sku": "ALB-LIPSTICK",
+    "cost": 346,
+    "threshold": 5,
+    "stock": {
+      "Penelope": 12,
+      "Olivia": 9,
+      "Verity": 6,
+      "Aurelia": 3,
+      "Eleanor": 0
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "tinted",
+    "name": "Tinted Glossy",
+    "cat": "Cosmetics",
+    "type": "Tinted Glossy",
+    "price": 990,
+    "sold": 2600,
+    "rating": 4.8,
+    "hue": 20,
+    "s": 34,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Chanel",
+        "Charlotte"
+      ]
+    },
+    "desc": "A glossy tint that adds soft color and shine. Choose your shade.",
+    "img": "",
+    "sku": "ALB-TINTED",
+    "cost": 346,
+    "threshold": 5,
+    "stock": {
+      "Chanel": 10,
+      "Charlotte": 7
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "lipcheek",
+    "name": "Lip & Cheek Tint",
+    "cat": "Cosmetics",
+    "type": "Lip & Cheek Tint",
+    "price": 990,
+    "sold": 3100,
+    "rating": 4.8,
+    "hue": 16,
+    "s": 34,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Anemone",
+        "Camellia",
+        "Freesia",
+        "Marsepein",
+        "Pairis",
+        "Versilia"
+      ]
+    },
+    "desc": "One tint for lips and cheeks, easy to blend. Choose your shade.",
+    "img": "",
+    "sku": "ALB-LIPCHEEK",
+    "cost": 346,
+    "threshold": 5,
+    "stock": {
+      "Anemone": 8,
+      "Camellia": 6,
+      "Freesia": 9,
+      "Marsepein": 5,
+      "Pairis": 4,
+      "Versilia": 7
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "hdnude",
+    "name": "HD Nude Matte Tint",
+    "cat": "Cosmetics",
+    "type": "HD Nude Matte Tint",
+    "price": 990,
+    "sold": 1900,
+    "rating": 4.8,
+    "hue": 28,
+    "s": 34,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Blossom",
+        "Pansy",
+        "Fittonia",
+        "Jasmine"
+      ]
+    },
+    "desc": "A nude matte tint with a natural, high-definition finish. Choose your shade.",
+    "img": "",
+    "sku": "ALB-HDNUDE",
+    "cost": 346,
+    "threshold": 5,
+    "stock": {
+      "Blossom": 10,
+      "Pansy": 8,
+      "Fittonia": 6,
+      "Jasmine": 9
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "serum",
+    "name": "Magic Lip Serum",
+    "cat": "Cosmetics",
+    "type": "Magic Lip Serum",
+    "price": 990,
+    "sold": 2400,
+    "rating": 4.8,
+    "hue": 12,
+    "s": 34,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Pink Shimmer"
+      ]
+    },
+    "desc": "A nourishing lip serum with a soft pink shimmer.",
+    "img": "",
+    "sku": "ALB-SERUM",
+    "cost": 346,
+    "threshold": 5,
+    "stock": {
+      "Pink Shimmer": 15
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "glow",
+    "name": "Silk Glow Highlighter",
+    "cat": "Cosmetics",
+    "price": 1490,
+    "sold": 1850,
+    "rating": 4.7,
+    "hue": 46,
+    "s": 40,
+    "variant": {
+      "label": "Shade",
+      "opts": [
+        "Champagne",
+        "Honey"
+      ]
+    },
+    "desc": "A finely milled powder highlighter that gives a smooth, natural glow on cheeks and collarbones.",
+    "img": "",
+    "sku": "ALB-GLOW",
+    "cost": 522,
+    "threshold": 5,
+    "stock": {
+      "Champagne": 12,
+      "Honey": 9
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "shades",
+    "name": "Luna Oversized Sunglasses",
+    "cat": "Accessories",
+    "price": 1590,
+    "sold": 1320,
+    "rating": 4.6,
+    "hue": 30,
+    "s": 28,
+    "variant": {
+      "label": "Frame",
+      "opts": [
+        "Black",
+        "Tortoise"
+      ]
+    },
+    "desc": "Oversized acetate frames with UV400 lenses and a protective case.",
+    "img": "",
+    "sku": "ALB-SHADES",
+    "cost": 556,
+    "threshold": 5,
+    "stock": {
+      "Black": 14,
+      "Tortoise": 10
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "scarf",
+    "name": "Dawn Silk Hair Scarf",
+    "cat": "Accessories",
+    "price": 890,
+    "was": 1190,
+    "sold": 2300,
+    "rating": 4.9,
+    "hue": 150,
+    "s": 22,
+    "variant": {
+      "label": "Print",
+      "opts": [
+        "Gold Stripe",
+        "Honey Dot"
+      ]
+    },
+    "desc": "Lightweight silk twill, 70 × 70 cm. Wear it in the hair, at the neck, or tied to a bag.",
+    "img": "",
+    "sku": "ALB-SCARF",
+    "cost": 312,
+    "threshold": 5,
+    "stock": {
+      "Gold Stripe": 13,
+      "Honey Dot": 11
+    },
+    "active": true,
+    "featured": false
+  },
+  {
+    "id": "perf-lun-001",
+    "name": "Lunaria",
+    "cat": "Perfume",
+    "desc": "A captivating floral fragrance with notes of night-blooming jasmine and soft musk. Perfect for evening wear.",
+    "price": 1250,
+    "cost": 650,
+    "sku": "PERF-LUN-001",
+    "care": "Store in a cool, dry place away from direct sunlight. Eau de Parfum, 50ml.",
+    "stock": 25,
+    "threshold": 5,
+    "location": "Shelf A1 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-ivo-002",
+    "name": "Ivory Pear",
+    "cat": "Perfume",
+    "desc": "A fresh, fruity scent combining crisp pear, white freesia, and a hint of vanilla.",
+    "price": 1150,
+    "cost": 580,
+    "sku": "PERF-IVO-002",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 20,
+    "threshold": 5,
+    "location": "Shelf A2 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-fra-003",
+    "name": "Fraise Royale",
+    "cat": "Perfume",
+    "desc": "A sweet and juicy strawberry fragrance with creamy undertones and a playful finish.",
+    "price": 1300,
+    "cost": 700,
+    "sku": "PERF-FRA-003",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 15,
+    "threshold": 5,
+    "location": "Shelf A3 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-alt-004",
+    "name": "Althéa",
+    "cat": "Perfume",
+    "desc": "A powdery, elegant scent with iris, violet, and soft amber. A timeless classic.",
+    "price": 1400,
+    "cost": 750,
+    "sku": "PERF-ALT-004",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 18,
+    "threshold": 5,
+    "location": "Shelf A4 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-our-005",
+    "name": "Our Story",
+    "cat": "Perfume",
+    "desc": "A romantic, warm fragrance featuring rose, oud, and a touch of honey.",
+    "price": 1500,
+    "cost": 800,
+    "sku": "PERF-OUR-005",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 12,
+    "threshold": 5,
+    "location": "Shelf A5 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-fem-006",
+    "name": "Femme Fatale",
+    "cat": "Perfume",
+    "desc": "A bold, seductive blend of black cherry, tuberose, and dark patchouli.",
+    "price": 1450,
+    "cost": 780,
+    "sku": "PERF-FEM-006",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 10,
+    "threshold": 5,
+    "location": "Shelf A6 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "perf-alv-007",
+    "name": "Alvayá",
+    "cat": "Perfume",
+    "desc": "A fresh, aquatic fragrance with citrus top notes and a clean, woody base.",
+    "price": 1200,
+    "cost": 620,
+    "sku": "PERF-ALV-007",
+    "care": "Store in a cool, dry place. Eau de Parfum, 50ml.",
+    "stock": 22,
+    "threshold": 5,
+    "location": "Shelf A7 - Perfume Display",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["50 ml"] }
+  },
+  {
+    "id": "flw-bq1-008",
+    "name": "#1 Flower Bouquet",
+    "cat": "Flowers",
+    "desc": "A hand-tied bouquet of seasonal fresh flowers in soft pastel tones.",
+    "price": 850,
+    "cost": 400,
+    "sku": "FLW-BQ1-008",
+    "care": "Trim stems and change water daily. Keep away from direct heat.",
+    "stock": 8,
+    "threshold": 3,
+    "location": "Cooler - Flower Section",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Bouquet", "opts": ["Standard"] }
+  },
+  {
+    "id": "flw-bq2-009",
+    "name": "#2 Flower Bouquet",
+    "cat": "Flowers",
+    "desc": "A vibrant bouquet featuring bold red and orange blooms, perfect for celebrations.",
+    "price": 950,
+    "cost": 450,
+    "sku": "FLW-BQ2-009",
+    "care": "Trim stems and change water daily. Keep away from direct heat.",
+    "stock": 6,
+    "threshold": 3,
+    "location": "Cooler - Flower Section",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Bouquet", "opts": ["Standard"] }
+  },
+  {
+    "id": "acc-hcl-010",
+    "name": "Hair Clip",
+    "cat": "Accessories",
+    "desc": "Decorative hair clip with a pearl accent. Suitable for all hair types.",
+    "price": 150,
+    "cost": 60,
+    "sku": "ACC-HCL-010",
+    "care": "Wipe with a dry cloth. Avoid contact with water and perfume.",
+    "stock": 50,
+    "threshold": 10,
+    "location": "Bin B1 - Accessories",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Style", "opts": ["Pearl"] }
+  },
+  {
+    "id": "acc-hcm-011",
+    "name": "Hair Clamp",
+    "cat": "Accessories",
+    "desc": "Large matte hair clamp for secure, comfortable hold.",
+    "price": 180,
+    "cost": 75,
+    "sku": "ACC-HCM-011",
+    "care": "Wipe with a dry cloth. Avoid dropping.",
+    "stock": 40,
+    "threshold": 10,
+    "location": "Bin B2 - Accessories",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Style", "opts": ["Matte"] }
+  },
+  {
+    "id": "acc-hti-012",
+    "name": "Hair Tie",
+    "cat": "Accessories",
+    "desc": "Pack of 5 seamless elastic hair ties in neutral colors.",
+    "price": 80,
+    "cost": 30,
+    "sku": "ACC-HTI-012",
+    "care": "Hand wash with mild soap. Air dry.",
+    "stock": 100,
+    "threshold": 20,
+    "location": "Bin B3 - Accessories",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Pack", "opts": ["5 pieces"] }
+  },
+  {
+    "id": "acc-hne-013",
+    "name": "Hair Net",
+    "cat": "Accessories",
+    "desc": "Fine mesh hair net, pack of 3. Invisible and lightweight.",
+    "price": 60,
+    "cost": 20,
+    "sku": "ACC-HNE-013",
+    "care": "Hand wash and air dry. Do not wring.",
+    "stock": 75,
+    "threshold": 15,
+    "location": "Bin B4 - Accessories",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Pack", "opts": ["3 pieces"] }
+  },
+  {
+    "id": "acc-rst-014",
+    "name": "Rhinestone Sticker",
+    "cat": "Accessories",
+    "desc": "Self-adhesive rhinestone stickers for face and body decoration.",
+    "price": 120,
+    "cost": 45,
+    "sku": "ACC-RST-014",
+    "care": "Single-use. Keep sealed until ready to use.",
+    "stock": 60,
+    "threshold": 15,
+    "location": "Bin B5 - Accessories",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Style", "opts": ["Rhinestone"] }
+  },
+  {
+    "id": "cos-vmp-015",
+    "name": "Velvet Matte Peneloppe",
+    "cat": "Cosmetics",
+    "desc": "Long-lasting velvet matte lipstick in a warm nude shade.",
+    "price": 350,
+    "cost": 150,
+    "sku": "COS-VMP-015",
+    "care": "Store at room temperature. 3.5g.",
+    "stock": 45,
+    "threshold": 10,
+    "location": "Shelf C1 - Cosmetics",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Shade", "opts": ["Peneloppe"] }
+  },
+  {
+    "id": "cos-vmo-016",
+    "name": "Velvet Matte Olivia",
+    "cat": "Cosmetics",
+    "desc": "Long-lasting velvet matte lipstick in a deep rose shade.",
+    "price": 350,
+    "cost": 150,
+    "sku": "COS-VMO-016",
+    "care": "Store at room temperature. 3.5g.",
+    "stock": 40,
+    "threshold": 10,
+    "location": "Shelf C2 - Cosmetics",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Shade", "opts": ["Olivia"] }
+  },
+  {
+    "id": "cos-mls-017",
+    "name": "Magic Lip Serum Pink Shimmer",
+    "cat": "Cosmetics",
+    "desc": "Hydrating lip serum with a subtle pink shimmer finish.",
+    "price": 280,
+    "cost": 120,
+    "sku": "COS-MLS-017",
+    "care": "Store at room temperature. 5ml.",
+    "stock": 35,
+    "threshold": 8,
+    "location": "Shelf C3 - Cosmetics",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Finish", "opts": ["Pink Shimmer"] }
+  },
+  {
+    "id": "jwl-chn-018",
+    "name": "Chain Of Hearts Necklace Silver 18 inch",
+    "cat": "Jewelry",
+    "desc": "Delicate silver-tone chain featuring small heart charms. 18-inch length.",
+    "price": 450,
+    "cost": 180,
+    "sku": "JWL-CHN-018",
+    "care": "Keep away from water and perfume. Store in a jewelry box.",
+    "stock": 30,
+    "threshold": 8,
+    "location": "Display D1 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Length", "opts": ["18 inch"] }
+  },
+  {
+    "id": "jwl-amo-019",
+    "name": "Amore Locket Necklace Gold 18 inch",
+    "cat": "Jewelry",
+    "desc": "Gold-tone locket necklace with a small heart pendant. 18-inch length.",
+    "price": 550,
+    "cost": 250,
+    "sku": "JWL-AMO-019",
+    "care": "Keep away from water and perfume. Store in a jewelry box.",
+    "stock": 25,
+    "threshold": 8,
+    "location": "Display D2 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Length", "opts": ["18 inch"] }
+  },
+  {
+    "id": "jwl-aur-020",
+    "name": "Aurora Bling Earrings",
+    "cat": "Jewelry",
+    "desc": "Sparkling statement earrings with crystal accents.",
+    "price": 380,
+    "cost": 150,
+    "sku": "JWL-AUR-020",
+    "care": "Wipe with a soft cloth after use. Keep away from water.",
+    "stock": 35,
+    "threshold": 10,
+    "location": "Display D3 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Set", "opts": ["Pair"] }
+  },
+  {
+    "id": "jwl-but-021",
+    "name": "Butterfly Silver Rings",
+    "cat": "Jewelry",
+    "desc": "Adjustable silver-tone ring with a butterfly motif.",
+    "price": 250,
+    "cost": 100,
+    "sku": "JWL-BUT-021",
+    "care": "Keep away from water and perfume. Store in a jewelry box.",
+    "stock": 50,
+    "threshold": 12,
+    "location": "Display D4 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Size", "opts": ["Adjustable"] }
+  },
+  {
+    "id": "jwl-ara-022",
+    "name": "Araw Araw Song Bracelet",
+    "cat": "Jewelry",
+    "desc": "Inspirational bracelet with the word \"Araw Araw\" charm, gold-tone.",
+    "price": 320,
+    "cost": 130,
+    "sku": "JWL-ARA-022",
+    "care": "Keep away from water and perfume. Store in a jewelry box.",
+    "stock": 40,
+    "threshold": 10,
+    "location": "Display D5 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Style", "opts": ["Gold-tone"] }
+  },
+  {
+    "id": "jwl-nab-023",
+    "name": "Na Para Bang Song Bracelet",
+    "cat": "Jewelry",
+    "desc": "Inspirational bracelet with the phrase \"Na Para Bang\" charm, silver-tone.",
+    "price": 320,
+    "cost": 130,
+    "sku": "JWL-NAB-023",
+    "care": "Keep away from water and perfume. Store in a jewelry box.",
+    "stock": 38,
+    "threshold": 10,
+    "location": "Display D6 - Jewelry",
+    "img": "",
+    "active": true,
+    "featured": false,
+    "variant": { "label": "Style", "opts": ["Silver-tone"] }
+  },
+  {
+    "id": "demo-gold-hoop",
+    "name": "Sample Gold Hoop Earrings",
+    "cat": "Jewelry",
+    "type": "Demo · Earrings",
+    "price": 590,
+    "sold": 0,
+    "rating": 0,
+    "hue": 43,
+    "s": 36,
+    "variant": { "label": "Set", "opts": ["Pair"] },
+    "desc": "Sample listing for testing catalog, inventory and point-of-sale workflows.",
+    "img": "",
+    "sku": "DEMO-JEWEL-001",
+    "cost": 210,
+    "threshold": 3,
+    "stock": { "Pair": 12 },
+    "active": true,
+    "online": false,
+    "featured": false,
+    "demo": true
+  },
+  {
+    "id": "demo-flower-bouquet",
+    "name": "Sample Mini Rose Bouquet",
+    "cat": "Flowers",
+    "type": "Demo · Bouquet",
+    "price": 850,
+    "sold": 0,
+    "rating": 0,
+    "hue": 350,
+    "s": 32,
+    "variant": {
+      "label": "Size",
+      "opts": ["Small", "Large"],
+      "prices": [850, 1250]
+    },
+    "desc": "Sample listing for testing a per-variant stock product.",
+    "img": "",
+    "sku": "DEMO-FLOWER-001",
+    "cost": 340,
+    "threshold": 3,
+    "stock": { "Small": 8, "Large": 4 },
+    "active": true,
+    "online": false,
+    "featured": false,
+    "demo": true
+  },
+  {
+    "id": "demo-cosmetic-tint",
+    "name": "Sample Everyday Lip Tint",
+    "cat": "Cosmetics",
+    "type": "Demo · Lip tint",
+    "price": 390,
+    "sold": 0,
+    "rating": 0,
+    "hue": 12,
+    "s": 38,
+    "variant": { "label": "Shade", "opts": ["Rose", "Coral"] },
+    "desc": "Sample listing for testing variants, online publishing and stock alerts.",
+    "img": "",
+    "sku": "DEMO-COSMETIC-001",
+    "cost": 145,
+    "threshold": 3,
+    "stock": { "Rose": 10, "Coral": 7 },
+    "active": true,
+    "online": false,
+    "featured": false,
+    "demo": true
+  }
+]
