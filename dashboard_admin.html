@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
     <title>ALBORÁ - Admin Dashboard</title>
     
     <!-- Bootstrap & Fonts -->
@@ -307,6 +309,184 @@
         .alert-text {
             color: var(--text-light);
         }
+
+        @media (max-width: 900px) {
+            .main-content,
+            .page-content {
+                width: 100%;
+                min-width: 0;
+            }
+
+            body .main-content .page-content {
+                max-width: none;
+                padding: 24px 22px !important;
+            }
+
+            .topbar {
+                padding: 14px 22px;
+            }
+        }
+
+        @media (max-width: 575px) {
+            body .main-content .page-content {
+                padding: 18px 14px !important;
+            }
+
+            .topbar {
+                display: grid;
+                grid-template-columns: auto minmax(0, 1fr);
+                gap: 10px;
+                padding: 12px 14px;
+            }
+
+            .topbar .sidebar-toggle {
+                grid-column: 1;
+                grid-row: 1;
+                white-space: nowrap;
+            }
+
+            .breadcrumb-text {
+                grid-column: 2;
+                grid-row: 1;
+                min-width: 0;
+                text-align: right;
+                font-size: 0.78rem;
+            }
+
+            .user-info {
+                grid-column: 1 / -1;
+                justify-self: end;
+                font-size: 0.8rem;
+            }
+
+            .page-content > .d-flex.justify-content-between.align-items-center.mb-4 {
+                flex-direction: column;
+                align-items: stretch !important;
+                gap: 14px;
+                margin-bottom: 1.25rem !important;
+            }
+
+            .page-title {
+                font-size: 1.45rem;
+                line-height: 1.25;
+            }
+
+            .page-subtitle {
+                line-height: 1.45;
+                margin-bottom: 0;
+            }
+
+            .page-content > .d-flex .btn-gold {
+                width: 100%;
+            }
+
+            .page-content .row.g-4 {
+                --bs-gutter-x: 1rem;
+                --bs-gutter-y: 1rem;
+            }
+
+            .stat-card {
+                padding: 16px;
+            }
+
+            .stat-title,
+            .stat-desc {
+                line-height: 1.4;
+                overflow-wrap: anywhere;
+            }
+
+            .stat-title {
+                font-size: 0.8rem;
+                margin-bottom: 8px;
+            }
+
+            .stat-value {
+                font-size: 1.35rem;
+                line-height: 1.2;
+                flex-wrap: wrap;
+            }
+
+            .section-card {
+                padding: 16px;
+                margin-bottom: 16px;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-wrap: wrap;
+                margin-bottom: 14px;
+            }
+
+            .section-header .section-title {
+                line-height: 1.35;
+            }
+
+            .section-header select {
+                max-width: 100%;
+            }
+
+            .action-list li {
+                align-items: flex-start;
+                gap: 12px;
+                line-height: 1.4;
+            }
+
+            .action-list li > span:first-child {
+                min-width: 0;
+                overflow-wrap: anywhere;
+            }
+
+            .action-count {
+                flex-shrink: 0;
+            }
+
+            .pill-badge {
+                line-height: 1.4;
+                white-space: normal;
+            }
+
+            .table-responsive {
+                -webkit-overflow-scrolling: touch;
+            }
+
+            .table-custom {
+                min-width: 720px;
+                margin-bottom: 0;
+            }
+
+            .table-custom th,
+            .table-custom td {
+                padding: 12px;
+                line-height: 1.4;
+            }
+
+            .table-custom th {
+                white-space: nowrap;
+            }
+
+            .table-custom td {
+                font-size: 0.85rem;
+            }
+
+            .table-custom td:nth-child(4) {
+                min-width: 190px;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+
+            .alert-custom {
+                min-height: 100%;
+                padding: 16px;
+                line-height: 1.45;
+            }
+        }
+
+        @media (max-width: 359px) {
+            .dashboard-stats > [class*="col-"] {
+                flex: 0 0 100%;
+                max-width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
@@ -363,29 +543,29 @@
             </div>
 
             <!-- Stat Cards -->
-            <div class="row g-4 mb-4">
-                <div class="col-md-3">
+            <div class="row g-4 mb-4 dashboard-stats">
+                <div class="col-6 col-md-3">
                     <div class="stat-card">
                         <div class="stat-title">Today's product sales</div>
                         <div class="stat-value"><span class="stat-currency">₱</span>0.00</div>
                         <div class="stat-desc">No recorded sales today</div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="stat-card">
                         <div class="stat-title">Open online orders</div>
                         <div class="stat-value">0</div>
                         <div class="stat-desc">No open online orders</div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="stat-card">
                         <div class="stat-title">Stock alerts</div>
                         <div class="stat-value">0</div>
                         <div class="stat-desc">No stock alerts</div>
                     </div>
                 </div>
-                <div class="col-md-3">
+                <div class="col-6 col-md-3">
                     <div class="stat-card">
                         <div class="stat-title">This week's sales</div>
                         <div class="stat-value"><span class="stat-currency">₱</span>0.00</div>

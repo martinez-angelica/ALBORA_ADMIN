@@ -15,6 +15,15 @@
     const voucherValues = { '10': 5, '30': 20, '50': 25 };
     let catalog = [];
     let cart = [];
+    let bottleReturns = [];
+
+    function voucherCode() {
+        return `ALB-RET-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+    }
+
+    function bottleReturnValue(item) {
+        return (voucherValues[String(item.bottleSize)] || 0) * item.quantity;
+    }
 
     function showStatus(message, isError) {
         statusBox.textContent = message;
@@ -289,7 +298,8 @@
         try {
             localStorage.setItem(draftKey, JSON.stringify({
                 items: cart,
-                customerName: customerNameInput.value.trim()
+                customerName: customerNameInput.value.trim(),
+                bottleReturns
             }));
             return true;
         } catch (error) {
@@ -358,7 +368,7 @@
         cartItems.replaceChildren();
         let quantityTotal = 0;
         let subtotal = 0;
-        if (cart.length === 0) {
+        if (cart.length === 0 && bottleReturns.length === 0) {
             const emptyMessage = document.createElement('p');
             emptyMessage.className = 'text-center text-muted py-4';
             emptyMessage.textContent = 'Your cart is empty';
@@ -402,14 +412,55 @@
             cartItems.append(row);
         });
 
+        bottleReturns.forEach((item, index) => {
+            const row = document.createElement('div');
+            row.className = 'cart-item';
+            const name = document.createElement('div');
+            name.className = 'cart-item-name';
+            name.textContent = `Returned bottle · ${item.bottleSize}ml`;
+            const details = document.createElement('div');
+            details.className = 'cart-item-price';
+            details.textContent = `${item.quantity} bottle${item.quantity === 1 ? '' : 's'} · ₱${bottleReturnValue(item).toFixed(2)} return credit`;
+            const controls = document.createElement('div');
+            controls.className = 'qty-controls';
+            const remove = document.createElement('button');
+            remove.type = 'button';
+            remove.className = 'remove-btn ms-auto';
+            remove.textContent = 'Remove return';
+            remove.setAttribute('aria-label', `Remove ${item.quantity} returned ${item.bottleSize}ml bottle(s)`);
+            remove.addEventListener('click', () => {
+                const [removed] = bottleReturns.splice(index, 1);
+                if (saveDraft()) renderCart();
+                else bottleReturns.splice(index, 0, removed);
+            });
+            controls.append(remove);
+            row.append(name, details, controls);
+            cartItems.append(row);
+        });
+
         const vat = subtotal * vatRate;
-        document.getElementById('cartSubtitle').textContent = cart.length ? 'Sale in progress' : 'No items added';
+        const saleGross = Number((subtotal + vat).toFixed(2));
+        const returnCredit = bottleReturns.reduce((sum, item) => sum + bottleReturnValue(item), 0);
+        const appliedReturnCredit = Math.min(saleGross, returnCredit);
+        const voucherBalance = returnCredit - appliedReturnCredit;
+        const discountRow = document.getElementById('cartBottleReturnDiscountRow');
+        const voucherRow = document.getElementById('cartReturnVoucherRow');
+        discountRow.classList.toggle('d-none', appliedReturnCredit <= 0);
+        voucherRow.classList.toggle('d-none', voucherBalance <= 0);
+        document.getElementById('cartBottleReturnDiscount').textContent = `−₱${appliedReturnCredit.toFixed(2)}`;
+        document.getElementById('cartReturnVoucher').textContent = `₱${voucherBalance.toFixed(2)}`;
+        document.getElementById('cartSubtitle').textContent = cart.length
+            ? bottleReturns.length ? 'Sale and bottle return in progress' : 'Sale in progress'
+            : bottleReturns.length ? 'Bottle return ready' : 'No items added';
         document.getElementById('cartCount').textContent = String(quantityTotal);
         document.getElementById('cartSubtotal').textContent = `₱${subtotal.toFixed(2)}`;
         document.getElementById('cartVat').textContent = `₱${vat.toFixed(2)}`;
-        document.getElementById('cartTotal').textContent = `₱${(subtotal + vat).toFixed(2)}`;
-        recordPaymentBtn.classList.toggle('disabled', cart.length === 0);
-        recordPaymentBtn.setAttribute('aria-disabled', String(cart.length === 0));
+        document.getElementById('cartTotal').textContent = `₱${(saleGross - appliedReturnCredit).toFixed(2)}`;
+        recordPaymentBtn.classList.toggle('disabled', cart.length === 0 && bottleReturns.length === 0);
+        recordPaymentBtn.setAttribute('aria-disabled', String(cart.length === 0 && bottleReturns.length === 0));
+        recordPaymentBtn.textContent = cart.length
+            ? 'Record payment →'
+            : bottleReturns.length ? 'Complete return & get receipt →' : 'Record payment →';
     }
 
     function updateVoucherValue() {
@@ -435,52 +486,110 @@
     document.getElementById('toggleBottleReturn').addEventListener('click', () => {
         bottleReturnPanel.hidden = !bottleReturnPanel.hidden;
         document.getElementById('toggleBottleReturn').setAttribute('aria-expanded', String(!bottleReturnPanel.hidden));
-        if (!bottleReturnPanel.hidden && !document.getElementById('returnCustomerName').value.trim()) {
-            document.getElementById('returnCustomerName').value = customerNameInput.value.trim();
-            document.getElementById('returnCustomerName').focus();
+        if (!bottleReturnPanel.hidden) {
+            const returnNameInput = document.getElementById('returnCustomerName');
+            if (!returnNameInput.value.trim()) returnNameInput.value = customerNameInput.value.trim();
+            document.getElementById('returnBottleSize').focus();
         }
     });
 
     document.getElementById('returnBottleSize').addEventListener('change', updateVoucherValue);
     document.getElementById('returnBottleQuantity').addEventListener('input', updateVoucherValue);
+
+    function completeReturnOnly(records) {
+        try {
+            const savedReceipts = JSON.parse(localStorage.getItem('alboraPosReceipts') || '[]');
+            const savedReturns = JSON.parse(localStorage.getItem('alboraBottleReturns') || '[]');
+            if (!Array.isArray(savedReceipts) || !Array.isArray(savedReturns)) {
+                throw new Error('Saved receipt or bottle return history is not a list.');
+            }
+
+            const now = new Date();
+            const receiptNumber = `RET-${now.getTime()}`;
+            const receiptReturns = records.map(item => ({
+                ...item,
+                date: item.date || now.toISOString(),
+                returnValue: bottleReturnValue(item),
+                appliedDiscount: 0,
+                voucherValue: bottleReturnValue(item),
+                voucherCode: item.voucherCode || voucherCode()
+            }));
+            const receipt = {
+                receiptNumber,
+                createdAt: now.toISOString(),
+                customerName: receiptReturns.find(item => item.customerName)?.customerName ||
+                    customerNameInput.value.trim() || '',
+                customerContact: '',
+                items: [],
+                subtotal: 0,
+                vat: 0,
+                discount: 0,
+                total: 0,
+                paymentMethod: 'Bottle return',
+                bottleReturns: receiptReturns,
+                returnOnly: true
+            };
+            const nextReceipts = [...savedReceipts, receipt];
+            const nextReturns = [...savedReturns, ...receiptReturns];
+            const oldReceipts = localStorage.getItem('alboraPosReceipts');
+            const oldReturns = localStorage.getItem('alboraBottleReturns');
+            try {
+                localStorage.setItem('alboraBottleReturns', JSON.stringify(nextReturns));
+                localStorage.setItem('alboraPosReceipts', JSON.stringify(nextReceipts));
+                localStorage.removeItem(draftKey);
+            } catch (error) {
+                if (oldReturns === null) localStorage.removeItem('alboraBottleReturns');
+                else localStorage.setItem('alboraBottleReturns', oldReturns);
+                if (oldReceipts === null) localStorage.removeItem('alboraPosReceipts');
+                else localStorage.setItem('alboraPosReceipts', oldReceipts);
+                throw error;
+            }
+            window.location.href = 'pos_digital_reciept.html';
+        } catch (error) {
+            const message = `Could not save the bottle return receipt: ${error.message}`;
+            bottleReturnStatus.textContent = message;
+            bottleReturnStatus.className = 'form-text text-danger';
+            showStatus(message, true);
+        }
+    }
+
     document.getElementById('posBottleReturnForm').addEventListener('submit', event => {
         event.preventDefault();
         const size = document.getElementById('returnBottleSize').value;
         const quantity = Number(document.getElementById('returnBottleQuantity').value);
         const customerName = document.getElementById('returnCustomerName').value.trim();
-        if (!voucherValues[size] || !Number.isInteger(quantity) || quantity < 1 || quantity > 100 || !customerName) {
-            bottleReturnStatus.textContent = 'Enter a customer name, valid bottle size, and quantity from 1 to 100.';
+        if (!voucherValues[size] || !Number.isInteger(quantity) || quantity < 1 || quantity > 100) {
+            bottleReturnStatus.textContent = 'Select a valid bottle size and enter a quantity from 1 to 100.';
             bottleReturnStatus.className = 'form-text text-danger';
             return;
         }
 
-        try {
-            const savedReturns = JSON.parse(localStorage.getItem('alboraBottleReturns') || '[]');
-            if (!Array.isArray(savedReturns)) throw new Error('Invalid bottle return history');
-            const now = new Date();
-            const record = {
-                date: now.toISOString(),
-                customerName,
-                bottleSize: size,
-                quantity,
-                voucherValue: voucherValues[size] * quantity,
-                voucherCode: `ALB-RET-${now.getTime().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`
-            };
-            savedReturns.push(record);
-            localStorage.setItem('alboraBottleReturns', JSON.stringify(savedReturns));
-            bottleReturnStatus.textContent = `Return recorded. Voucher ${record.voucherCode} worth ₱${record.voucherValue.toLocaleString('en-PH')} issued.`;
+        const record = {
+            date: new Date().toISOString(),
+            customerName,
+            bottleSize: size,
+            quantity,
+            returnValue: voucherValues[size] * quantity,
+            voucherCode: voucherCode()
+        };
+        bottleReturns.push(record);
+        if (saveDraft()) {
+            renderCart();
+            bottleReturnStatus.textContent = cart.length
+                ? `Return added. ₱${record.returnValue.toFixed(2)} credit will reduce this sale; any unused credit becomes a voucher.`
+                : 'Return added. Add products to apply the credit, or complete the return to issue a voucher receipt.';
             bottleReturnStatus.className = 'form-text text-success';
             event.currentTarget.reset();
             updateVoucherValue();
-        } catch (error) {
-            bottleReturnStatus.textContent = `Could not save the return: ${error.message}`;
-            bottleReturnStatus.className = 'form-text text-danger';
+        } else {
+            bottleReturns.pop();
         }
     });
 
     customerNameInput.addEventListener('input', saveDraft);
     document.getElementById('clearCartBtn').addEventListener('click', () => {
         cart = [];
+        bottleReturns = [];
         customerNameInput.value = '';
         try {
             localStorage.removeItem(draftKey);
@@ -494,7 +603,8 @@
     recordPaymentBtn.addEventListener('click', event => {
         if (!cart.length) {
             event.preventDefault();
-            showStatus('Add at least one product before recording payment.', true);
+            if (bottleReturns.length) completeReturnOnly(bottleReturns);
+            else showStatus('Add a product or return a bottle before continuing.', true);
         } else if (!saveDraft()) {
             event.preventDefault();
         }
@@ -522,6 +632,14 @@
                 }
                 cart = parsedDraft.items;
                 customerNameInput.value = typeof parsedDraft.customerName === 'string' ? parsedDraft.customerName : '';
+                if (parsedDraft.bottleReturns !== undefined) {
+                    if (!Array.isArray(parsedDraft.bottleReturns) || !parsedDraft.bottleReturns.every(item =>
+                        item && voucherValues[String(item.bottleSize)] &&
+                        Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= 100)) {
+                        throw new Error('Invalid saved bottle return data');
+                    }
+                    bottleReturns = parsedDraft.bottleReturns;
+                }
             }
         } catch (error) {
             cart = [];

@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
     <title>ALBORÁ - Transactions</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -534,6 +536,8 @@
                             <option>Cash</option>
                             <option>GCash</option>
                             <option>Maribank</option>
+                            <option>Bottle return</option>
+                            <option>Bottle return credit</option>
                         </select>
                         <button id="applyTransactionFilters" type="button" class="btn btn-outline-custom">Apply filters</button>
                     </div>
@@ -618,7 +622,7 @@
                 allTransactions = receipts.filter(receipt =>
                     receipt && typeof receipt.receiptNumber === 'string' &&
                     Number.isFinite(Date.parse(receipt.createdAt)) &&
-                    ['Cash', 'GCash', 'Maribank'].includes(receipt.paymentMethod) &&
+                    ['Cash', 'GCash', 'Maribank', 'Bottle return', 'Bottle return credit'].includes(receipt.paymentMethod) &&
                     Number.isFinite(receipt.total)
                 );
                 renderTransactions();
@@ -652,16 +656,17 @@
             const weekStartKey = receiptDateKey(weekStart);
             const weekTransactions = allTransactions.filter(receipt => {
                 const date = receiptDateKey(receipt.createdAt);
-                return date >= weekStartKey && date <= todayKey;
+                return !receipt.returnOnly && date >= weekStartKey && date <= todayKey;
             });
             document.getElementById('weekRevenue').textContent = weekTransactions
                 .reduce((sum, receipt) => sum + receipt.total, 0)
                 .toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             document.getElementById('weekOrderCount').textContent = String(weekTransactions.length);
-            document.getElementById('walkInRevenue').textContent = allTransactions
+            const salesTransactions = allTransactions.filter(receipt => !receipt.returnOnly);
+            document.getElementById('walkInRevenue').textContent = salesTransactions
                 .reduce((sum, receipt) => sum + receipt.total, 0)
                 .toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-            document.getElementById('walkInCount').textContent = String(allTransactions.length);
+            document.getElementById('walkInCount').textContent = String(salesTransactions.length);
             if (filtered.length === 0) {
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
@@ -674,12 +679,21 @@
                 filtered.forEach(receipt => {
                     const row = document.createElement('tr');
                     const date = new Date(receipt.createdAt);
+                    const voucherValue = Array.isArray(receipt.bottleReturns)
+                        ? receipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                        : 0;
                     const values = [
                         date.toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
                         receipt.receiptNumber,
-                        receipt.demo === true ? 'Demo walk-in product sale' : 'Walk-in product sale',
-                        receipt.paymentMethod,
-                        `₱${receipt.total.toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
+                        receipt.returnOnly
+                            ? 'Bottle return voucher'
+                            : receipt.demo === true
+                                ? 'Demo walk-in product sale'
+                                : receipt.bottleReturns?.length
+                                    ? 'Walk-in sale with bottle return'
+                                    : 'Walk-in product sale',
+                        receipt.returnOnly ? 'Voucher issued' : receipt.paymentMethod,
+                        `₱${(receipt.returnOnly ? voucherValue : receipt.total).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
                         receipt.demo === true ? 'Demo' : 'Admin'
                     ];
                     values.forEach(value => {
@@ -722,9 +736,17 @@
                 ...getFilteredTransactions().map(receipt => [
                     new Date(receipt.createdAt).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }),
                     receipt.receiptNumber,
-                    receipt.demo === true ? 'Demo walk-in product sale' : 'Walk-in product sale',
-                    receipt.paymentMethod,
-                    receipt.total.toFixed(2),
+                    receipt.returnOnly
+                        ? 'Bottle return voucher'
+                        : receipt.demo === true
+                            ? 'Demo walk-in product sale'
+                            : receipt.bottleReturns?.length
+                                ? 'Walk-in sale with bottle return'
+                                : 'Walk-in product sale',
+                    receipt.returnOnly ? 'Voucher issued' : receipt.paymentMethod,
+                    (receipt.returnOnly && Array.isArray(receipt.bottleReturns)
+                        ? receipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                        : receipt.total).toFixed(2),
                     receipt.demo === true ? 'Demo' : 'Admin'
                 ])
             ];

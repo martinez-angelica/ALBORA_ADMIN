@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
     <title>ALBORÁ - Point of Sale</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -630,8 +632,8 @@
             }
 
             .product-grid {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
-                gap: 6px;
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
             }
 
             .product-card {
@@ -640,7 +642,7 @@
             }
 
             .product-image {
-                aspect-ratio: 1 / 1;
+                aspect-ratio: 1 / 1.2;
             }
 
             .product-card-body {
@@ -877,22 +879,30 @@
                             <span>VAT (12%)</span>
                             <span id="cartVat">₱0.00</span>
                         </div>
+                        <div id="cartBottleReturnDiscountRow" class="summary-row d-none">
+                            <span>Bottle return discount</span>
+                            <span id="cartBottleReturnDiscount">₱0.00</span>
+                        </div>
+                        <div id="cartReturnVoucherRow" class="summary-row d-none">
+                            <span>Voucher to issue</span>
+                            <span id="cartReturnVoucher">₱0.00</span>
+                        </div>
                         <div class="summary-total d-flex justify-content-between">
                             <span>Total</span>
                             <span id="cartTotal">₱0.00</span>
                         </div>
                         
                         <a id="recordPaymentBtn" href="pos_payment_record.html" class="btn btn-gold mb-2 d-block text-center text-decoration-none disabled" aria-disabled="true">Record payment &rarr;</a>
-                        <button id="clearCartBtn" type="button" class="btn btn-outline-custom">Clear cart</button>
-                        <button id="toggleBottleReturn" type="button" class="btn btn-outline-custom mt-2" aria-expanded="false" aria-controls="bottleReturnPanel">Add bottle return</button>
+                        <button id="clearCartBtn" type="button" class="btn btn-outline-custom">Clear sale</button>
+                        <button id="toggleBottleReturn" type="button" class="btn btn-outline-custom mt-2" aria-expanded="false" aria-controls="bottleReturnPanel">Return Bottle</button>
                         <!-- Page section -->
                         <section id="bottleReturnPanel" class="bottle-return-panel mt-3" aria-labelledby="bottleReturnTitle" hidden>
                             <h5 id="bottleReturnTitle" class="section-title mb-3">Record perfume bottle return</h5>
-                            <p class="form-text">Issue a return voucher for an empty perfume bottle.</p>
+                            <p class="form-text">Return an empty perfume bottle for a discount on this sale, or a voucher if there is no purchase.</p>
                             <!-- Form controls -->
                             <form id="posBottleReturnForm">
-                                <label for="returnCustomerName" class="form-label">Customer name</label>
-                                <input id="returnCustomerName" class="form-control mb-2" type="text" maxlength="100" required>
+                                <label for="returnCustomerName" class="form-label">Customer name · optional</label>
+                                <input id="returnCustomerName" class="form-control mb-2" type="text" maxlength="100">
                                 <label for="returnBottleSize" class="form-label">Bottle size</label>
                                 <select id="returnBottleSize" class="form-select mb-2" required>
                                     <option value="" selected disabled>Select size</option>

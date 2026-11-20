@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
     <title>ALBORÁ - Record Payment</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -396,6 +398,7 @@
                                 <tbody id="saleItems"></tbody>
                             </table>
                         </div>
+                        <div id="saleBottleReturnDetails" class="form-text d-none mb-3" aria-live="polite"></div>
 
                         <div class="summary-row">
                             <span>Subtotal</span>
@@ -406,8 +409,12 @@
                             <span id="saleVat">₱0.00</span>
                         </div>
                         <div class="summary-row">
-                            <span>Discount</span>
+                            <span>Bottle return discount</span>
                             <span id="saleDiscount">₱0.00</span>
+                        </div>
+                        <div id="saleReturnVoucherRow" class="summary-row d-none">
+                            <span>Voucher to issue</span>
+                            <span id="saleReturnVoucher">₱0.00</span>
                         </div>
                         <div class="summary-row">
                             <span>Shipping</span>
@@ -507,8 +514,13 @@
         const cashReceivedInput = document.getElementById('cashReceived');
         const paymentStatus = document.getElementById('paymentStatus');
         const completeSaleBtn = document.getElementById('completeSaleBtn');
+        const bottleVoucherValues = { '10': 5, '30': 20, '50': 25 };
         let currentSale = null;
         let selectedMethod = 'Cash';
+
+        function createVoucherCode() {
+            return `ALB-RET-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
+        }
 
         function formatMoney(value) {
             return `₱${value.toFixed(2)}`;
@@ -576,13 +588,28 @@
             const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
             if (!Number.isFinite(subtotal) || subtotal <= 0) throw new Error('Invalid sale total');
             const vat = Number((subtotal * 0.12).toFixed(2));
+            const bottleReturns = Array.isArray(draft.bottleReturns) ? draft.bottleReturns : [];
+            if (draft.bottleReturns !== undefined && (!Array.isArray(draft.bottleReturns) ||
+                !bottleReturns.every(item => item && bottleVoucherValues[String(item.bottleSize)] &&
+                    Number.isInteger(item.quantity) && item.quantity >= 1 && item.quantity <= 100))) {
+                throw new Error('Invalid bottle return data');
+            }
+            const returnCredit = bottleReturns.reduce((sum, item) =>
+                sum + bottleVoucherValues[String(item.bottleSize)] * item.quantity, 0);
+            const gross = Number((subtotal + vat).toFixed(2));
+            const discount = Math.min(gross, returnCredit);
+            const voucherBalance = returnCredit - discount;
             currentSale = {
                 items,
                 subtotal,
-                discount: 0,
+                discount,
+                voucherBalance,
                 vat,
-                total: Number((subtotal + vat).toFixed(2)),
-                customerName: typeof draft.customerName === 'string' ? draft.customerName : ''
+                total: Number((gross - discount).toFixed(2)),
+                customerName: typeof draft.customerName === 'string' && draft.customerName
+                    ? draft.customerName
+                    : bottleReturns.find(item => item.customerName)?.customerName || '',
+                bottleReturns
             };
 
             const itemBody = document.getElementById('saleItems');
@@ -603,15 +630,37 @@
                 row.append(nameCell, quantityCell, priceCell, totalCell);
                 itemBody.append(row);
             });
+            const returnDetails = document.getElementById('saleBottleReturnDetails');
+            returnDetails.classList.toggle('d-none', bottleReturns.length === 0);
+            returnDetails.replaceChildren();
+            bottleReturns.forEach(item => {
+                const line = document.createElement('div');
+                line.textContent =
+                    `${item.quantity} × ${item.bottleSize}ml bottle · ₱${(bottleVoucherValues[String(item.bottleSize)] * item.quantity).toFixed(2)} return credit`;
+                returnDetails.append(line);
+            });
 
-            document.getElementById('saleSubtitle').textContent = `${items.reduce((sum, item) => sum + item.quantity, 0)} item(s) in this sale`;
+            document.getElementById('saleSubtitle').textContent =
+                `${items.reduce((sum, item) => sum + item.quantity, 0)} item(s) in this sale` +
+                (bottleReturns.length ? ` · ${bottleReturns.length} bottle return(s)` : '');
             document.getElementById('saleSubtotal').textContent = formatMoney(subtotal);
             document.getElementById('saleVat').textContent = formatMoney(vat);
-            document.getElementById('saleDiscount').textContent = formatMoney(0);
+            document.getElementById('saleDiscount').textContent = formatMoney(discount);
+            document.getElementById('saleReturnVoucherRow').classList.toggle('d-none', voucherBalance <= 0);
+            document.getElementById('saleReturnVoucher').textContent = formatMoney(voucherBalance);
             document.getElementById('saleTotal').textContent = formatMoney(currentSale.total);
             document.getElementById('paymentTotal').textContent = formatMoney(currentSale.total);
             document.getElementById('customerName').value = currentSale.customerName;
-            document.getElementById('saleInfoText').textContent = 'Confirm the payment details before completing this walk-in sale.';
+            const noPaymentDue = currentSale.total === 0;
+            document.querySelector('.payment-method-group').classList.toggle('d-none', noPaymentDue);
+            document.getElementById('cashInputs').classList.toggle('d-none', noPaymentDue);
+            document.getElementById('walletInputs').classList.add('d-none');
+            document.getElementById('paymentMethodHelp').textContent = noPaymentDue
+                ? 'Bottle return credit covers the total. No additional payment is due.'
+                : 'For GCash or Maribank, confirm the funds arrived before completing the sale.';
+            document.getElementById('saleInfoText').textContent = noPaymentDue
+                ? 'Bottle return credit covers this sale. Complete it to issue any remaining voucher.'
+                : 'Confirm the payment details before completing this walk-in sale.';
             document.getElementById('saleInfo').classList.add('d-none');
             completeSaleBtn.disabled = false;
             return true;
@@ -628,33 +677,49 @@
                 return;
             }
 
-            const cashReceived = selectedMethod === 'Cash' ? Number(cashReceivedInput.value) : 0;
+            const noPaymentDue = currentSale.total === 0;
+            const cashReceived = !noPaymentDue && selectedMethod === 'Cash' ? Number(cashReceivedInput.value) : 0;
             const walletReference = document.getElementById('walletReference').value.trim();
-            if (selectedMethod === 'Cash' && (!Number.isFinite(cashReceived) || cashReceived < currentSale.total)) {
+            if (!noPaymentDue && selectedMethod === 'Cash' && (!Number.isFinite(cashReceived) || cashReceived < currentSale.total)) {
                 showStatus('Enter cash received equal to or greater than the amount due.', true);
                 cashReceivedInput.focus();
                 return;
             }
-            if (selectedMethod !== 'Cash' && !walletReference) {
+            if (!noPaymentDue && selectedMethod !== 'Cash' && !walletReference) {
                 showStatus(`Enter the ${selectedMethod} reference number to continue.`, true);
                 document.getElementById('walletReference').focus();
                 return;
             }
-            if (selectedMethod !== 'Cash' && !document.getElementById('walletVerified').checked) {
+            if (!noPaymentDue && selectedMethod !== 'Cash' && !document.getElementById('walletVerified').checked) {
                 showStatus('Confirm that the payment arrived in the business wallet before completing the sale.', true);
                 document.getElementById('walletVerified').focus();
                 return;
             }
 
+            let creditToApply = currentSale.discount;
+            const receiptBottleReturns = currentSale.bottleReturns.map(item => {
+                const returnValue = bottleVoucherValues[String(item.bottleSize)] * item.quantity;
+                const appliedDiscount = Math.min(returnValue, creditToApply);
+                creditToApply -= appliedDiscount;
+                return {
+                    ...item,
+                    date: item.date || new Date().toISOString(),
+                    returnValue,
+                    appliedDiscount,
+                    voucherValue: returnValue - appliedDiscount,
+                    voucherCode: item.voucherCode || createVoucherCode()
+                };
+            });
             const receipt = {
                 ...currentSale,
                 receiptNumber: `POS-${Date.now()}`,
                 createdAt: new Date().toISOString(),
-                paymentMethod: selectedMethod,
-                paymentReference: selectedMethod === 'Cash' ? '' : walletReference,
-                walletVerified: selectedMethod !== 'Cash',
+                paymentMethod: noPaymentDue ? 'Bottle return credit' : selectedMethod,
+                paymentReference: !noPaymentDue && selectedMethod !== 'Cash' ? walletReference : '',
+                walletVerified: !noPaymentDue && selectedMethod !== 'Cash',
                 cashTendered: cashReceived,
-                change: selectedMethod === 'Cash' ? cashReceived - currentSale.total : 0,
+                change: !noPaymentDue && selectedMethod === 'Cash' ? cashReceived - currentSale.total : 0,
+                bottleReturns: receiptBottleReturns,
                 customerContact: document.getElementById('customerContact').value.trim(),
                 note: document.getElementById('internalNote').value.trim()
             };
@@ -669,6 +734,8 @@
                 const movements = JSON.parse(localStorage.getItem('alboraStockMovements') || '[]');
                 if (!Array.isArray(movements)) throw new Error('Invalid stock movement history');
                 const nextMovements = [...movements];
+                const savedReturns = JSON.parse(localStorage.getItem('alboraBottleReturns') || '[]');
+                if (!Array.isArray(savedReturns)) throw new Error('Invalid bottle return history');
                 const stockAfter = new Map();
                 receipt.items.forEach(item => {
                     if (!item.productId) return;
@@ -703,6 +770,8 @@
                 });
                 if (rawCatalog !== null) localStorage.setItem('alboraAdminProducts', JSON.stringify(nextCatalog));
                 localStorage.setItem('alboraStockMovements', JSON.stringify(nextMovements.slice(0, 1000)));
+                savedReturns.push(...receiptBottleReturns);
+                localStorage.setItem('alboraBottleReturns', JSON.stringify(savedReturns));
                 receipts.push(receipt);
                 localStorage.setItem('alboraPosReceipts', JSON.stringify(receipts));
                 localStorage.removeItem(draftKey);

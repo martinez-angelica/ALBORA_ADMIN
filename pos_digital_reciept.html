@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
     <title>ALBORÁ - Receipt</title>
     
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -471,7 +473,7 @@
                             </div>
                             <div class="receipt-location">Business contact details not configured</div>
                             
-                            <div class="receipt-type">WALK-IN SALES RECEIPT</div>
+                            <div id="receiptTypeLabel" class="receipt-type">WALK-IN SALES RECEIPT</div>
                             
                             <div class="receipt-info-row">
                                 <span>Receipt</span>
@@ -502,12 +504,16 @@
                                     <span id="receiptVat">₱0.00</span>
                                 </div>
                                 <div class="receipt-total-row">
-                                    <span>Discount</span>
+                                    <span>Bottle return discount</span>
                                     <span id="receiptDiscount">₱0.00</span>
                                 </div>
                                 <div class="receipt-total-row final">
-                                    <span>TOTAL PAID</span>
+                                    <span id="receiptFinalTotalLabel">TOTAL PAID</span>
                                     <span id="receiptTotal">₱0.00</span>
+                                </div>
+                                <div id="receiptReturnVoucherRow" class="receipt-total-row d-none">
+                                    <span>Voucher issued</span>
+                                    <span id="receiptReturnVoucher">₱0.00</span>
                                 </div>
                                 <div class="receipt-total-row mt-2">
                                     <span>Payment</span>
@@ -596,31 +602,66 @@
             return `₱${value.toFixed(2)}`;
         }
 
+        let currentReceipt = null;
+
         function renderReceipt(receipt) {
-            if (!receipt || typeof receipt.receiptNumber !== 'string' ||
-                !['Cash', 'GCash', 'Maribank'].includes(receipt.paymentMethod) ||
-                !Array.isArray(receipt.items) || receipt.items.length === 0 ||
-                !receipt.items.every(item => item && typeof item.name === 'string' && item.name.trim() &&
-                    Number.isFinite(item.price) && item.price > 0 &&
-                    Number.isInteger(item.quantity) && item.quantity > 0) ||
+            const returnOnly = receipt?.returnOnly === true;
+            const validItems = Array.isArray(receipt?.items) && receipt.items.every(item =>
+                item && typeof item.name === 'string' && item.name.trim() &&
+                Number.isFinite(item.price) && item.price > 0 &&
+                Number.isInteger(item.quantity) && item.quantity > 0);
+            const validReturnOnlyReceipt = returnOnly && Array.isArray(receipt?.bottleReturns) &&
+                receipt.bottleReturns.length > 0 && receipt.bottleReturns.every(item =>
+                    item && ['10', '30', '50'].includes(String(item.bottleSize)) &&
+                    Number.isInteger(item.quantity) && item.quantity > 0 &&
+                    Number.isFinite(item.voucherValue) && item.voucherValue >= 0);
+            const validBottleReturns = receipt?.bottleReturns === undefined ||
+                Array.isArray(receipt.bottleReturns) && receipt.bottleReturns.every(item =>
+                    item && ['10', '30', '50'].includes(String(item.bottleSize)) &&
+                    Number.isInteger(item.quantity) && item.quantity > 0 &&
+                    Number.isFinite(item.returnValue) && item.returnValue >= 0 &&
+                    Number.isFinite(item.appliedDiscount) && item.appliedDiscount >= 0 &&
+                    Number.isFinite(item.voucherValue) && item.voucherValue >= 0);
+            const supportedPayment = ['Cash', 'GCash', 'Maribank'].includes(receipt?.paymentMethod) ||
+                (receipt?.paymentMethod === 'Bottle return credit' && !returnOnly) ||
+                (receipt?.paymentMethod === 'Bottle return' && validReturnOnlyReceipt);
+            if (!receipt || typeof receipt.receiptNumber !== 'string' || !supportedPayment || !validBottleReturns ||
+                !validItems || (returnOnly ? receipt.items.length !== 0 : receipt.items.length === 0) ||
                 !Number.isFinite(receipt.total) || !Number.isFinite(receipt.subtotal) ||
-                (receipt.paymentMethod !== 'Cash' && receipt.walletVerified !== true)) {
+                (['GCash', 'Maribank'].includes(receipt.paymentMethod) && receipt.walletVerified !== true)) {
                 return false;
             }
 
             const date = new Date(receipt.createdAt);
             if (Number.isNaN(date.getTime())) return false;
 
+            currentReceipt = receipt;
             document.getElementById('receiptSubtitle').textContent = `Receipt ${receipt.receiptNumber}`;
-            document.getElementById('receiptBannerTitle').textContent = 'Walk-in sale completed';
-            document.getElementById('receiptBannerMessage').textContent = 'Payment was recorded in this browser.';
+            document.getElementById('receiptBannerTitle').textContent =
+                returnOnly ? 'Bottle return recorded' : 'Walk-in sale completed';
+            document.getElementById('receiptTypeLabel').textContent =
+                returnOnly ? 'BOTTLE RETURN RECEIPT' : 'WALK-IN SALES RECEIPT';
+            const returnVoucherTotal = Array.isArray(receipt.bottleReturns)
+                ? receipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                : 0;
+            document.getElementById('receiptBannerMessage').textContent = returnOnly
+                ? `Return recorded. A ₱${returnVoucherTotal.toFixed(2)} voucher was issued; no purchase was made.`
+                : receipt.paymentMethod === 'Bottle return credit'
+                    ? 'Bottle return credit covered the total; no additional payment was due.'
+                    : 'Payment was recorded in this browser.';
             document.getElementById('receiptNumber').textContent = receipt.receiptNumber;
             document.getElementById('receiptDate').textContent = date.toLocaleString();
             document.getElementById('receiptSubtotal').textContent = formatMoney(receipt.subtotal);
             document.getElementById('receiptVat').textContent = formatMoney(Number.isFinite(receipt.vat) ? receipt.vat : 0);
             document.getElementById('receiptDiscount').textContent = formatMoney(receipt.discount || 0);
             document.getElementById('receiptTotal').textContent = formatMoney(receipt.total);
-            document.getElementById('receiptPayment').textContent = receipt.paymentMethod;
+            document.getElementById('receiptFinalTotalLabel').textContent =
+                returnOnly ? 'AMOUNT PAID' : receipt.paymentMethod === 'Bottle return credit' ? 'AMOUNT DUE' : 'TOTAL PAID';
+            document.getElementById('receiptPayment').textContent = returnOnly
+                ? 'Voucher issued · no payment due'
+                : receipt.paymentMethod;
+            document.getElementById('receiptReturnVoucherRow').classList.toggle('d-none', returnVoucherTotal <= 0);
+            document.getElementById('receiptReturnVoucher').textContent = formatMoney(returnVoucherTotal);
             const referenceRow = document.getElementById('receiptReferenceRow');
             if (receipt.paymentReference) {
                 document.getElementById('receiptReference').textContent = receipt.paymentReference;
@@ -631,11 +672,11 @@
             document.getElementById('receiptChangeRow').classList.toggle('d-none', !isCash);
             document.getElementById('receiptCash').textContent = formatMoney(receipt.cashTendered || 0);
             document.getElementById('receiptChange').textContent = formatMoney(receipt.change || 0);
-            document.getElementById('receiptFooter').textContent = receipt.customerName
-                ? `Thank you, ${receipt.customerName}.`
-                : 'Thank you for shopping with Alborá.';
-            document.getElementById('receiptBadge').textContent = 'Payment recorded';
-            document.getElementById('receiptChannel').textContent = 'Walk-in';
+            document.getElementById('receiptFooter').textContent = returnOnly
+                ? receipt.customerName ? `Bottle return recorded for ${receipt.customerName}.` : 'Bottle return recorded.'
+                : receipt.customerName ? `Thank you, ${receipt.customerName}.` : 'Thank you for shopping with Alborá.';
+            document.getElementById('receiptBadge').textContent = returnOnly ? 'Return recorded' : 'Payment recorded';
+            document.getElementById('receiptChannel').textContent = returnOnly ? 'Bottle return' : 'Walk-in';
             document.getElementById('receiptItemCount').textContent =
                 `${receipt.items.reduce((sum, item) => sum + item.quantity, 0)} units`;
             document.getElementById('receiptRevenue').textContent = formatMoney(receipt.total);
@@ -654,6 +695,21 @@
                 row.append(name, total);
                 itemsContainer.append(row);
             });
+            (Array.isArray(receipt.bottleReturns) ? receipt.bottleReturns : []).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'd-flex justify-content-between text-start mb-2';
+                const name = document.createElement('span');
+                const voucherCode = Number(item.voucherValue) > 0 && item.voucherCode
+                    ? ` · voucher ${item.voucherCode}`
+                    : '';
+                name.textContent = `Returned ${item.bottleSize}ml bottle × ${item.quantity}${voucherCode}`;
+                const amount = document.createElement('strong');
+                amount.textContent = returnOnly
+                    ? `Voucher ${formatMoney(Number(item.voucherValue) || 0)}`
+                    : `−${formatMoney(Number(item.appliedDiscount) || 0)}`;
+                row.append(name, amount);
+                itemsContainer.append(row);
+            });
             document.getElementById('printReceiptBtn').disabled = false;
             return true;
         }
@@ -664,7 +720,16 @@
             const status = document.getElementById('receiptShareStatus');
             const receiptNumber = document.getElementById('receiptNumber').textContent;
             const receiptTotal = document.getElementById('receiptTotal').textContent;
-            const message = `Thank you for shopping with Alborá. Receipt ${receiptNumber}. Total paid: ${receiptTotal}.`;
+            const voucherTotal = Array.isArray(currentReceipt?.bottleReturns)
+                ? currentReceipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                : 0;
+            const voucherCodes = Array.isArray(currentReceipt?.bottleReturns)
+                ? currentReceipt.bottleReturns.filter(item => Number(item.voucherValue) > 0)
+                    .map(item => item.voucherCode).filter(Boolean).join(', ')
+                : '';
+            const message = currentReceipt?.returnOnly
+                ? `Thank you for returning bottles to Alborá. Receipt ${receiptNumber}. Voucher issued: ${formatMoney(voucherTotal)}${voucherCodes ? `. Code: ${voucherCodes}` : ''}.`
+                : `Thank you for shopping with Alborá. Receipt ${receiptNumber}. Total paid: ${receiptTotal}.`;
             let destination;
             if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
                 destination = `mailto:${contact}?subject=${encodeURIComponent(`Alborá receipt ${receiptNumber}`)}&body=${encodeURIComponent(message)}`;

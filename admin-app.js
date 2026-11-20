@@ -1864,10 +1864,13 @@
             });
         }
         values.forEach((item, index) => {
+            const axisLabel = compact && period === 'daily'
+                ? item.date.toLocaleDateString('en-PH', { weekday: 'short', timeZone: 'UTC' })
+                : item.label;
             add('text', {
                 x: x(index), y: height - 12, 'text-anchor': 'middle',
-                fill: '#7c796f', 'font-size': compact ? 8.5 : period === 'monthly' ? 11 : 12
-            }, item.label);
+                fill: '#7c796f', 'font-size': compact && period === 'daily' ? 10 : compact ? 8.5 : period === 'monthly' ? 11 : 12
+            }, axisLabel);
         });
         if (!maxRevenue) {
             add('text', {
@@ -1913,14 +1916,16 @@
             notice('Saved POS receipt data is invalid and could not be displayed on the dashboard.', 'error');
         }
         const walkInOrders = (Array.isArray(savedReceipts) ? savedReceipts : []).filter(receipt =>
-            receipt && Number.isFinite(Date.parse(receipt.createdAt))
+            receipt && receipt.returnOnly !== true && Number.isFinite(Date.parse(receipt.createdAt))
         ).map(receipt => ({
             id: String(receipt.receiptNumber || 'POS sale'),
             at: new Date(receipt.createdAt),
             customer: receipt.customerName || receipt.customerContact || 'Walk-in customer',
             channel: receipt.demo === true ? 'Walk-in · Demo' : 'Walk-in',
             items: Array.isArray(receipt.items) ? receipt.items.map(item => `${item.name} × ${item.quantity}`).join(', ') : '—',
-            payment: `${receipt.paymentMethod || 'Payment'} · paid`,
+            payment: receipt.paymentMethod === 'Bottle return credit'
+                ? 'Bottle return credit · no payment due'
+                : `${receipt.paymentMethod || 'Payment'} · paid`,
             fulfillment: 'Complete',
             href: 'transaction_list.html'
         }));
@@ -2879,6 +2884,7 @@
 
     function initialize() {
         installSharedStyles();
+        document.documentElement.classList.remove('admin-theme-loading');
         if (page === 'admin_login.html') {
             initializeLogin();
             return;
