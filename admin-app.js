@@ -3,6 +3,7 @@
 
     const KEYS = {
         products: 'alboraAdminProducts',
+        suppliers: 'alboraAdminSuppliers',
         users: 'alboraAdminUsers',
         audit: 'alboraAdminAudit',
         settings: 'alboraAdminSettings',
@@ -498,6 +499,7 @@
             const menuItems = [
                 { label: 'Overview', href: 'dashboard_admin.html', pages: ['dashboard_admin.html'] },
                 { label: 'Products', href: 'products.html', pages: ['products.html', 'add_product.html', 'edit_product.html', 'delete_product.html'] },
+                { label: 'Suppliers', href: 'supplier.html', pages: ['supplier.html'] },
                 { label: 'Inventory', href: 'alerts_stock.html', pages: ['alerts_stock.html', 'inventory.html', 'stock_list_update.html'] },
                 { label: 'Orders', href: 'order_list.html', pages: ['order_list.html', 'order_details.html'] },
                 { label: 'Payment verification', href: 'product_payment_proof.html', pages: ['product_payment_proof.html', 'shipping_payment_proof.html'] },
@@ -2574,6 +2576,131 @@
         }, true);
     }
 
+    function initializeSuppliers() {
+        if (page !== 'supplier.html') return;
+        const form = $('#supplierForm');
+        const tableBody = $('#supplierRows');
+        const search = $('#supplierSearch');
+        const statusFilter = $('#supplierStatusFilter');
+        const count = $('#supplierCount');
+        const activeCount = $('#activeSupplierCount');
+        const contactsCount = $('#supplierContactsCount');
+        const supplierData = readJSON(KEYS.suppliers, []);
+        if (!Array.isArray(supplierData)) {
+            notice('Saved supplier data is invalid and could not be displayed.', 'error');
+            return;
+        }
+        let suppliers = supplierData.filter(item => item && typeof item === 'object');
+        const readOnly = document.body.classList.contains('admin-read-only');
+
+        function renderSuppliers() {
+            const query = (search?.value || '').trim().toLowerCase();
+            const selectedStatus = statusFilter?.value || '';
+            const filtered = suppliers.filter(supplier => {
+                const matchesQuery = [
+                    supplier.name, supplier.contact, supplier.email, supplier.phone,
+                    supplier.address, supplier.products
+                ].some(value => String(value || '').toLowerCase().includes(query));
+                return matchesQuery && (!selectedStatus || supplier.status === selectedStatus);
+            });
+            count.textContent = String(suppliers.length);
+            activeCount.textContent = String(suppliers.filter(supplier => supplier.status === 'Active').length);
+            contactsCount.textContent = String(suppliers.filter(supplier => supplier.email || supplier.phone).length);
+            tableBody.innerHTML = filtered.length ? filtered.map(supplier => `
+                <tr>
+                    <td><strong>${escapeHTML(supplier.name)}</strong><div class="small text-muted">${escapeHTML(supplier.products || 'No product details')}</div></td>
+                    <td>${escapeHTML(supplier.contact || '—')}</td>
+                    <td>${escapeHTML(supplier.email || '—')}<div>${escapeHTML(supplier.phone || '')}</div></td>
+                    <td>${escapeHTML(supplier.address || '—')}</td>
+                    <td><span class="badge ${supplier.status === 'Active' ? 'text-bg-success' : 'text-bg-secondary'}">${escapeHTML(supplier.status)}</span></td>
+                    ${readOnly ? '' : `<td class="text-nowrap">
+                        <button type="button" class="btn btn-sm btn-outline-secondary" data-supplier-edit="${escapeHTML(supplier.id)}">Edit</button>
+                        <button type="button" class="btn btn-sm btn-outline-danger" data-supplier-delete="${escapeHTML(supplier.id)}">Remove</button>
+                    </td>`}
+                </tr>`).join('') :
+                `<tr><td colspan="${readOnly ? 5 : 6}" class="text-center text-muted py-4">${query || selectedStatus ? 'No suppliers match these filters.' : 'No suppliers added yet. Add your first supplier using the form.'}</td></tr>`;
+        }
+
+        if (!form || !tableBody || !count || !activeCount || !contactsCount) return;
+        const actionsHeading = $('#supplierActionsHeading');
+        if (actionsHeading) actionsHeading.hidden = readOnly;
+        renderSuppliers();
+        search?.addEventListener('input', renderSuppliers);
+        statusFilter?.addEventListener('change', renderSuppliers);
+        form.addEventListener('submit', event => {
+            event.preventDefault();
+            const values = Object.fromEntries(new FormData(form).entries());
+            const supplier = {
+                name: String(values.name || '').trim(),
+                contact: String(values.contact || '').trim(),
+                email: String(values.email || '').trim(),
+                phone: String(values.phone || '').trim(),
+                address: String(values.address || '').trim(),
+                products: String(values.products || '').trim(),
+                status: String(values.status || 'Active')
+            };
+            if (!supplier.name) return notice('Enter a supplier name.', 'error');
+            if (!supplier.email && !supplier.phone) return notice('Enter an email address or phone number.', 'error');
+
+            const editingId = String(values.id || '');
+            if (editingId) {
+                const existing = suppliers.find(item => item.id === editingId);
+                if (!existing) return notice('The supplier being edited could not be found.', 'error');
+                Object.assign(existing, supplier, { updatedAt: new Date().toISOString() });
+            } else {
+                suppliers.unshift({
+                    ...supplier,
+                    id: `supplier-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+                    createdAt: new Date().toISOString()
+                });
+            }
+            if (!writeJSON(KEYS.suppliers, suppliers)) return;
+            recordAudit(editingId ? 'Updated supplier' : 'Added supplier', supplier.name);
+            form.reset();
+            $('#supplierId').value = '';
+            $('#supplierFormTitle').textContent = 'Add a supplier';
+            $('#supplierSaveButton').textContent = 'Save supplier';
+            $('#supplierCancelEdit').hidden = true;
+            renderSuppliers();
+            notice(editingId ? 'Supplier updated.' : 'Supplier added.', 'success');
+        });
+        $('#supplierCancelEdit')?.addEventListener('click', () => {
+            form.reset();
+            $('#supplierId').value = '';
+            $('#supplierFormTitle').textContent = 'Add a supplier';
+            $('#supplierSaveButton').textContent = 'Save supplier';
+            $('#supplierCancelEdit').hidden = true;
+        });
+        tableBody.addEventListener('click', event => {
+            const button = event.target instanceof Element ? event.target.closest('[data-supplier-edit], [data-supplier-delete]') : null;
+            if (!button) return;
+            const supplier = suppliers.find(item => item.id === (button.dataset.supplierEdit || button.dataset.supplierDelete));
+            if (!supplier) return notice('The selected supplier could not be found.', 'error');
+            if (button.hasAttribute('data-supplier-edit')) {
+                $('#supplierId').value = supplier.id;
+                Object.entries({
+                    name: supplier.name, contact: supplier.contact, email: supplier.email,
+                    phone: supplier.phone, address: supplier.address, products: supplier.products,
+                    status: supplier.status
+                }).forEach(([name, value]) => {
+                    const input = $(`[name="${name}"]`, form);
+                    if (input) input.value = value || '';
+                });
+                $('#supplierFormTitle').textContent = 'Edit supplier';
+                $('#supplierSaveButton').textContent = 'Update supplier';
+                $('#supplierCancelEdit').hidden = false;
+                $('#supplierFormTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+                return;
+            }
+            if (!window.confirm(`Remove ${supplier.name} from suppliers?`)) return;
+            suppliers = suppliers.filter(item => item.id !== supplier.id);
+            if (!writeJSON(KEYS.suppliers, suppliers)) return;
+            recordAudit('Removed supplier', supplier.name);
+            renderSuppliers();
+            notice('Supplier removed.', 'success');
+        });
+    }
+
     function bindSettings() {
         if (page !== 'system_settings.html') return;
         const form = $('#systemSettingsForm');
@@ -3138,6 +3265,7 @@
         });
         enhanceTables();
         bindSettings();
+        initializeSuppliers();
         bindUserActions();
         renderUsers();
         renderOrderList();

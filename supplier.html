@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
+    <meta name="description" content="Manage supplier contacts and product sourcing details.">
+    <title>ALBORÁ - Suppliers</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --brand-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333;
+            --text-light: #777;
+            --sidebar-width: 260px;
+        }
+        * { box-sizing: border-box; }
+        body { margin: 0; background: var(--bg-cream); color: var(--text-dark); font-family: Lato, sans-serif; }
+        .sidebar { position: fixed; inset: 0 auto 0 0; z-index: 3; width: var(--sidebar-width); background: var(--brand-gold); color: #fff; overflow-y: auto; }
+        .sidebar-logo-container { padding: 20px; text-align: center; }
+        .sidebar-logo { width: 155px; max-width: 100%; }
+        .sidebar-menu { margin: 0; padding: 0 0 20px; list-style: none; }
+        .sidebar-menu a { display: block; padding: 11px 22px; color: #fff; text-decoration: none; }
+        .sidebar-menu a:hover, .sidebar-menu .active a { background: #ffffff26; }
+        .sidebar-menu .active a { border-left: 4px solid #fff; padding-left: 18px; }
+        .main-content { min-height: 100vh; margin-left: var(--sidebar-width); }
+        .topbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 16px 30px; background: var(--header-bg); border-bottom: 1px solid #c89020; }
+        .page-content { max-width: 1400px; padding: 30px; margin: auto; }
+        .section-card { height: 100%; margin-bottom: 22px; padding: 24px; border: 1px solid #eee4cf; border-radius: 12px; background: var(--surface); }
+        .page-title { margin: 0 0 5px; font-size: 1.8rem; font-weight: 700; }
+        .page-subtitle { margin-bottom: 24px; color: var(--text-light); }
+        .form-label { font-weight: 700; }
+        .btn-gold { border: 0; background: var(--brand-gold); color: #fff; font-weight: 700; }
+        .btn-gold:hover { background: #8c6010; color: #fff; }
+        .stat-card { height: 100%; padding: 18px 20px; border: 1px solid #eee4cf; border-radius: 12px; background: var(--surface); }
+        .stat-label { color: var(--text-light); font-size: .9rem; }
+        .stat-value { margin-top: 6px; font-size: 1.8rem; font-weight: 700; }
+        .table-responsive { max-height: 620px; overflow: auto; }
+        @media (max-width: 768px) {
+            .sidebar { transform: translateX(-100%); transition: transform .2s ease; }
+            .sidebar.admin-sidebar-open { transform: translateX(0); }
+            .main-content { margin-left: 0; }
+            .topbar { flex-wrap: wrap; padding: 14px 18px; }
+            .page-content { padding: 18px; }
+            .section-card { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+    <aside class="sidebar" aria-label="Admin navigation">
+        <div class="sidebar-logo-container"><a href="dashboard_admin.html"><img src="alborá-logo.png" alt="Alborá" class="sidebar-logo"></a></div>
+        <ul class="sidebar-menu"></ul>
+    </aside>
+    <main class="main-content">
+        <header class="topbar">
+            <div class="breadcrumb-text">Workspace / Suppliers</div>
+            <div class="user-info d-flex align-items-center gap-3"><span>Admin access</span><a href="admin_logout.html" style="color:#8c6010">Log out</a></div>
+        </header>
+        <div class="page-content">
+            <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
+                <div>
+                    <h1 class="page-title">Suppliers</h1>
+                    <p class="page-subtitle mb-0">Keep supplier contacts and sourcing details organized in one place.</p>
+                </div>
+            </div>
+
+            <section class="row g-3 mb-4" aria-label="Supplier summary">
+                <div class="col-sm-4"><div class="stat-card"><div class="stat-label">Total suppliers</div><div class="stat-value" id="supplierCount">0</div></div></div>
+                <div class="col-sm-4"><div class="stat-card"><div class="stat-label">Active suppliers</div><div class="stat-value" id="activeSupplierCount">0</div></div></div>
+                <div class="col-sm-4"><div class="stat-card"><div class="stat-label">With contact details</div><div class="stat-value" id="supplierContactsCount">0</div></div></div>
+            </section>
+
+            <div class="row g-4">
+                <div class="col-lg-4">
+                    <section class="section-card" data-admin-write>
+                        <h2 class="h5 mb-3" id="supplierFormTitle">Add a supplier</h2>
+                        <form id="supplierForm">
+                            <input type="hidden" id="supplierId" name="id">
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierName">Supplier name *</label>
+                                <input class="form-control" id="supplierName" name="name" maxlength="120" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierContact">Contact person</label>
+                                <input class="form-control" id="supplierContact" name="contact" maxlength="120">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierEmail">Email</label>
+                                <input class="form-control" id="supplierEmail" name="email" type="email" maxlength="160">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierPhone">Phone</label>
+                                <input class="form-control" id="supplierPhone" name="phone" type="tel" maxlength="40">
+                                <div class="form-text">Provide an email address or phone number.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierAddress">Address</label>
+                                <textarea class="form-control" id="supplierAddress" name="address" rows="2" maxlength="300"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierProducts">Products supplied</label>
+                                <input class="form-control" id="supplierProducts" name="products" maxlength="200" placeholder="e.g. Jewelry, packaging">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="supplierStatus">Status</label>
+                                <select class="form-select" id="supplierStatus" name="status">
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                </select>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <button class="btn btn-gold" id="supplierSaveButton" type="submit">Save supplier</button>
+                                <button class="btn btn-outline-secondary" id="supplierCancelEdit" type="button" hidden>Cancel edit</button>
+                            </div>
+                        </form>
+                    </section>
+                </div>
+                <div class="col-lg-8">
+                    <section class="section-card">
+                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                            <div><h2 class="h5 mb-1">Supplier directory</h2><p class="text-muted mb-0">Contact and sourcing information.</p></div>
+                            <div class="d-flex gap-2">
+                                <label class="visually-hidden" for="supplierSearch">Search suppliers</label>
+                                <input class="form-control" id="supplierSearch" type="search" placeholder="Search suppliers">
+                                <label class="visually-hidden" for="supplierStatusFilter">Filter by status</label>
+                                <select class="form-select" id="supplierStatusFilter">
+                                    <option value="">All statuses</option>
+                                    <option>Active</option>
+                                    <option>Inactive</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle">
+                                <thead><tr><th>Supplier</th><th>Contact person</th><th>Contact details</th><th>Address</th><th>Status</th><th id="supplierActionsHeading">Actions</th></tr></thead>
+                                <tbody id="supplierRows"><tr><td colspan="6" class="text-center text-muted py-4">Loading suppliers…</td></tr></tbody>
+                            </table>
+                        </div>
+                        <p class="form-text mb-0">Supplier records are saved in this browser.</p>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+    <script src="admin-app.js"></script>
+</body>
+</html>
