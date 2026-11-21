@@ -2162,10 +2162,6 @@
     function renderDashboardCharts() {
         if (page !== 'dashboard_admin.html') return;
         const rows = reportingRows();
-        renderSampleDataNotice(
-            rows.some(row => row.sample),
-            'Sample POS and online-order records are included in these dashboard figures; they are not actual sales.'
-        );
         const orders = customerOrders();
         const today = dayKey(new Date());
         const weekStart = new Date(`${today}T00:00:00Z`);
