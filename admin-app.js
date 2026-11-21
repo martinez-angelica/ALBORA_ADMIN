@@ -914,9 +914,7 @@
     }
 
     function setCategoryOptions(root) {
-        const categories = Array.from(new Set(products.map(product => product.cat)));
-        if (!categories.length) categories.push('Accessories', 'Alborá Men', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume');
-        categories.sort();
+        const categories = ['Accessories', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume'];
         $$('select', root).forEach(select => {
             const label = select.previousElementSibling;
             if (!label || !/category/i.test(label.textContent)) return;
@@ -1239,7 +1237,7 @@
                 else select.selectedIndex = 0;
             };
             setOptions(selects[0], ['In stock', 'Low stock', 'Out of stock'], 'All products');
-            setOptions(selects[1], Array.from(new Set(products.map(item => item.cat))).sort(), 'All categories');
+            setOptions(selects[1], ['Accessories', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume'], 'All categories');
             setOptions(selects[2], ['Published', 'Draft', 'Archived'], 'All statuses');
         }
         ensureProductBulkTools(list);
@@ -1522,7 +1520,7 @@
         const categorySelect = $$('.filter-bar select')[2];
         if (categorySelect && !categorySelect.dataset.adminCategories) {
             const currentCategory = categorySelect.value;
-            const categories = Array.from(new Set(inventoryProducts.map(product => product.cat))).sort();
+            const categories = ['Accessories', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume'];
             categorySelect.replaceChildren(new Option('Category', 'Category'), ...categories.map(category => new Option(category, category)));
             if (categories.includes(currentCategory)) categorySelect.value = currentCategory;
             categorySelect.dataset.adminCategories = 'true';

@@ -664,12 +664,10 @@
                 <select id="reportCategory" class="form-select filter-select" aria-label="Product category">
                     <option value="">All categories</option>
                     <option>Accessories</option>
-                    <option>Alborá Men</option>
                     <option>Cosmetics</option>
                     <option>Flowers</option>
                     <option>Jewelry</option>
                     <option>Perfume</option>
-                    <option>Perfume Women</option>
                 </select>
                 <button id="applyReportFilters" type="button" class="btn btn-gold">Apply filters</button>
             </div>
@@ -1551,7 +1549,7 @@
                 productTotals.set(key, product);
             }));
 
-            const knownCategories = ['Accessories', 'Alborá Men', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume', 'Perfume Women', 'Uncategorized'];
+            const knownCategories = ['Accessories', 'Cosmetics', 'Flowers', 'Jewelry', 'Perfume'];
             const categories = reportCategory.value
                 ? [reportCategory.value]
                 : [...new Set([...knownCategories, ...categoryTotals.keys()])];
