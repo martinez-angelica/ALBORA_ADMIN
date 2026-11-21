@@ -544,7 +544,7 @@
                 else localStorage.setItem('alboraPosReceipts', oldReceipts);
                 throw error;
             }
-            window.location.href = 'pos_digital_reciept.html';
+            window.location.href = 'pos_digital_receipt.html';
         } catch (error) {
             const message = `Could not save the bottle return receipt: ${error.message}`;
             bottleReturnStatus.textContent = message;

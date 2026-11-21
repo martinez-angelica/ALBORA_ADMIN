@@ -387,10 +387,6 @@
                 font-size: 0.78rem;
             }
 
-            #applyTransactionFilters {
-                grid-column: 1 / -1;
-            }
-
             .section-card {
                 padding: 12px;
                 min-width: 0;
@@ -537,9 +533,7 @@
                             <option>GCash</option>
                             <option>Maribank</option>
                             <option>Bottle return</option>
-                            <option>Bottle return credit</option>
                         </select>
-                        <button id="applyTransactionFilters" type="button" class="btn btn-outline-custom">Apply filters</button>
                     </div>
                 </div>
             </div>
@@ -601,6 +595,11 @@
         const transactionRows = document.getElementById('transactionRows');
         const transactionStatus = document.getElementById('transactionStatus');
         let allTransactions = [];
+
+        function isSampleTransaction(receipt) {
+            return receipt?.sample === true || receipt?.demo === true ||
+                /^(SAMPLE-POS-|DEMO-POS-)/i.test(String(receipt?.receiptNumber || ''));
+        }
 
         function receiptDateKey(value) {
             const date = new Date(value);
@@ -687,14 +686,14 @@
                         receipt.receiptNumber,
                         receipt.returnOnly
                             ? 'Bottle return voucher'
-                            : receipt.demo === true
-                                ? 'Demo walk-in product sale'
+                            : isSampleTransaction(receipt)
+                                ? 'Sample walk-in product sale'
                                 : receipt.bottleReturns?.length
                                     ? 'Walk-in sale with bottle return'
                                     : 'Walk-in product sale',
                         receipt.returnOnly ? 'Voucher issued' : receipt.paymentMethod,
                         `₱${(receipt.returnOnly ? voucherValue : receipt.total).toLocaleString('en-PH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`,
-                        receipt.demo === true ? 'Demo' : 'Admin'
+                        isSampleTransaction(receipt) ? 'Sample' : 'Admin'
                     ];
                     values.forEach(value => {
                         const cell = document.createElement('td');
@@ -707,12 +706,11 @@
 
             document.getElementById('transactionCount').textContent =
                 `${filtered.length} transaction record${filtered.length === 1 ? '' : 's'}`;
-            const demoCount = filtered.filter(receipt => receipt.demo === true).length;
-            transactionStatus.textContent = `${filtered.length} saved POS transaction(s) match the selected filters. ${demoCount} demo transaction(s) are labeled Demo. Online transactions are not connected in this browser demo.`;
+            const sampleCount = filtered.filter(isSampleTransaction).length;
+            transactionStatus.textContent = `${filtered.length} saved POS transaction(s) match the selected filters. ${sampleCount} sample transaction(s) are labeled Sample. Online orders are listed separately in Orders.`;
             transactionStatus.className = 'form-text mb-3';
         }
 
-        document.getElementById('applyTransactionFilters').addEventListener('click', renderTransactions);
         transactionSearch.addEventListener('input', renderTransactions);
         transactionPayment.addEventListener('change', renderTransactions);
         transactionDateFrom.addEventListener('change', renderTransactions);
@@ -720,7 +718,6 @@
         document.getElementById('clearTransactionHistory').addEventListener('click', () => {
             if (!window.confirm('Delete all saved POS transaction history? This cannot be undone. Orders and inventory will remain unchanged.')) return;
             try {
-                localStorage.setItem('alboraDemoReceiptsCleared', 'true');
                 localStorage.setItem('alboraPosReceipts', '[]');
                 allTransactions = [];
                 renderTransactions();
@@ -738,8 +735,8 @@
                     receipt.receiptNumber,
                     receipt.returnOnly
                         ? 'Bottle return voucher'
-                        : receipt.demo === true
-                            ? 'Demo walk-in product sale'
+                        : isSampleTransaction(receipt)
+                            ? 'Sample walk-in product sale'
                             : receipt.bottleReturns?.length
                                 ? 'Walk-in sale with bottle return'
                                 : 'Walk-in product sale',
@@ -747,7 +744,7 @@
                     (receipt.returnOnly && Array.isArray(receipt.bottleReturns)
                         ? receipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
                         : receipt.total).toFixed(2),
-                    receipt.demo === true ? 'Demo' : 'Admin'
+                    isSampleTransaction(receipt) ? 'Sample' : 'Admin'
                 ])
             ];
             const csv = rows.map(row => row.map(value => `"${String(value).replace(/"/g, '""')}"`).join(',')).join('\r\n');
@@ -761,6 +758,7 @@
             setTimeout(() => URL.revokeObjectURL(fileUrl), 1000);
         });
 
+        window.addEventListener('albora:sample-records-seeded', loadTransactions);
         window.addEventListener('albora:demo-receipts-seeded', loadTransactions);
         window.addEventListener('storage', event => {
             if (event.key === 'alboraPosReceipts') loadTransactions();

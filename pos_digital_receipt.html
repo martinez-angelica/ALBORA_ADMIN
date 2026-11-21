@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>document.documentElement.classList.add('admin-theme-loading');</script>
+    <style>html.admin-theme-loading body { visibility: hidden; }</style>
+    <title>ALBORÁ - Receipt</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    
+    <!-- Page styles -->
+    <style>
+        :root {
+            --alborá-gold: #C5A038;
+            --surface: #FFFDF8;
+            --header-bg: #F0D890;
+            --gold-accent: #C89020;
+            --alborá-gold-hover: #8C6010;
+            --bg-cream: #FAF0D0;
+            --text-dark: #333333;
+            --text-light: #777777;
+            --sidebar-width: 260px;
+        }
+
+        body {
+            background-color: var(--bg-cream);
+            font-family: 'Lato', sans-serif;
+            color: var(--text-dark);
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: var(--alborá-gold);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        .sidebar-logo-container {
+            text-align: center;
+            padding: 20px 25px;
+            margin-bottom: 10px;
+        }
+
+        .sidebar-logo {
+            max-width: 155px;
+            height: auto;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        .sidebar-menu li a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 12px 25px;
+            font-size: 0.9rem;
+            transition: background 0.2s;
+        }
+
+        .sidebar-menu li a:hover, .sidebar-menu li.active a {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+
+        .sidebar-menu li.active a {
+            border-left: 4px solid white;
+            padding-left: 21px;
+        }
+
+        .sidebar-section-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: rgba(255, 255, 255, 0.7);
+            padding: 20px 25px 10px;
+            letter-spacing: 1px;
+        }
+
+        
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .topbar {
+            background-color: var(--header-bg);
+            border-bottom: 1px solid var(--gold-accent);
+            
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            
+        }
+
+        .breadcrumb-text {
+            color: var(--text-light);
+            font-size: 0.85rem;
+        }
+
+        .user-info {
+            font-size: 0.85rem;
+            color: var(--text-dark);
+        }
+        
+        .user-info span {
+            color: var(--text-light);
+            margin: 0 5px;
+        }
+
+        .page-content {
+            padding: 30px;
+            flex-grow: 1;
+        }
+
+        .page-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .page-subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 25px;
+        }
+
+        
+        .btn-gold {
+            background-color: var(--alborá-gold);
+            color: white;
+            border-radius: 8px;
+            padding: 10px 20px;
+            font-weight: 700;
+            border: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+            white-space: nowrap;
+        }
+
+        .btn-gold:hover {
+            background-color: var(--alborá-gold-hover);
+            color: white;
+        }
+
+        .btn-outline-custom {
+            background-color: var(--surface);
+            color: var(--text-dark);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px;
+            width: 100%;
+            font-weight: 700;
+            font-size: 0.85rem;
+            transition: background-color 0.3s;
+        }
+
+        .btn-outline-custom:hover {
+            background-color: #FFF8E8;
+        }
+
+        
+        .success-banner {
+            background-color: #EAF4F4;
+            border: 1px solid #CBE3E3;
+            border-radius: 8px;
+            padding: 15px;
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 25px;
+        }
+
+        .success-icon {
+            color: #2C7A7B;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .success-text strong {
+            display: block;
+            color: var(--text-dark);
+            font-size: 0.9rem;
+            margin-bottom: 2px;
+        }
+        
+        .success-text {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        
+        .receipt-wrapper {
+            background-color: #EAE4D3; 
+            border-radius: 12px;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 600px;
+        }
+
+        .receipt-paper {
+            background: var(--surface);
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            font-family: 'Lato', sans-serif;
+        }
+
+        .receipt-brand {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .receipt-location {
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+        }
+
+        .receipt-type {
+            text-align: center;
+            font-weight: 700;
+            font-size: 0.85rem;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+        }
+
+        .receipt-info-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+        
+        .receipt-info-row strong {
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+
+        .receipt-divider {
+            border-top: 1px solid #EAEAEA;
+            margin: 20px 0;
+        }
+        
+        .receipt-item {
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+        
+        .receipt-item-price {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            margin-bottom: 12px;
+        }
+
+        .receipt-totals {
+            font-size: 0.85rem;
+            margin-top: 15px;
+        }
+        
+        .receipt-total-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            color: var(--text-light);
+        }
+        
+        .receipt-total-row.final {
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 10px;
+        }
+
+        .receipt-footer {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 1rem;
+            color: #333;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+        }
+        
+        .receipt-disclaimer {
+            text-align: center;
+            font-size: 0.65rem;
+            color: #B0B0B0;
+            margin-top: 15px;
+        }
+
+        
+        .section-card {
+            background: var(--surface);
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+            border: 1px solid #E8D59A;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .pill-badge-paid {
+            background-color: #EAF4F4;
+            color: #2C7A7B;
+            font-size: 0.75rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .review-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 12px;
+            color: var(--text-light);
+        }
+        
+        .review-row strong {
+            color: var(--text-dark);
+            font-weight: 400;
+        }
+        
+        .form-control {
+            background-color: var(--surface);
+            border: 1px solid #E0E0E0;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            margin-bottom: 10px;
+        }
+
+        .form-control:focus {
+            box-shadow: none;
+            border-color: var(--alborá-gold);
+        }
+
+        @media print {
+            body {
+                background: var(--surface);
+            }
+
+            .sidebar,
+            .topbar,
+            .success-banner,
+            .section-card,
+            .btn,
+            .page-title,
+            .page-subtitle {
+                display: none !important;
+            }
+
+            .main-content {
+                margin: 0;
+            }
+
+            .page-content {
+                padding: 0;
+            }
+
+            .receipt-wrapper,
+            .receipt-paper {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                box-shadow: none;
+                border: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Page: ALBORÁ - Receipt -->
+
+    
+    <!-- Sidebar navigation -->
+    <div class="sidebar">
+        <div class="sidebar-logo-container">
+            <img src="alborá-logo.png" alt="Alborá Logo" class="sidebar-logo">
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li><a href="dashboard_admin.html">Overview</a></li>
+            <li><a href="products.html">Products</a></li>
+            <li><a href="alerts_stock.html">Inventory</a></li>
+            <li><a href="order_list.html">Orders</a></li>
+            <li><a href="product_payment_proof.html">Payment verification</a></li>
+            <li><a href="two_stage_payment.html">Two-stage payments</a></li>
+            <li class="active"><a href="point_of_sales.html">Point of sale</a></li>
+            <li><a href="transaction_list.html">Transactions</a></li>
+            <li><a href="sales.html">Reports</a></li>
+            <li><a href="business_analytics.html">Business analytics</a></li>
+            <li><a href="historical_data.html">Historical data</a></li>
+            <li><a href="system_settings.html">System settings</a></li>
+            
+            <li><a href="user%20%26%20permissions.html">Users & permissions</a></li>
+            <li><a href="backup%20%26%20data%20recovery.html">Backup & recovery</a></li>
+        </ul>
+    </div>
+
+    
+    <!-- Main admin workspace -->
+    <div class="main-content">
+        
+        <!-- Page header and account controls -->
+        <div class="topbar">
+            <div class="breadcrumb-text">Workspace / Point of sale</div>
+            <div class="user-info d-flex align-items-center gap-3">
+                <span>Admin access</span>
+                <a href="admin_logout.html" style="color: #C5A038; text-decoration: none;">Log out</a>
+            </div>
+        </div>
+
+        
+        <!-- Page content area -->
+        <div class="page-content">
+            
+            
+            <div class="d-flex justify-content-between align-items-start mb-4">
+                <div>
+                        <h1 class="page-title">Digital receipt</h1>
+                        <div id="receiptSubtitle" class="page-subtitle">No receipt available</div>
+                </div>
+                <a href="point_of_sales.html" class="btn btn-gold">Start a new sale</a>
+            </div>
+
+            
+            <div class="success-banner">
+                <div class="success-icon">✓</div>
+                <div class="success-text">
+                        <strong id="receiptBannerTitle">No sale recorded</strong>
+                        <span id="receiptBannerMessage">A receipt will appear after a sale is completed.</span>
+                </div>
+            </div>
+
+            <div class="row g-4">
+                
+                <div class="col-lg-7">
+                    <div class="receipt-wrapper">
+                        <div class="receipt-paper">
+                            <div class="receipt-brand">
+                                <img class="receipt-logo" src="alborá-logo.png" alt="Alborá">
+                            </div>
+                            <div class="receipt-location">Business contact details not configured</div>
+                            
+                            <div id="receiptTypeLabel" class="receipt-type">WALK-IN SALES RECEIPT</div>
+                            
+                            <div class="receipt-info-row">
+                                <span>Receipt</span>
+                                <strong id="receiptNumber">—</strong>
+                            </div>
+                            <div class="receipt-info-row">
+                                <span>Date / time</span>
+                                <strong id="receiptDate">—</strong>
+                            </div>
+                            <div class="receipt-info-row">
+                                <span>Staff</span>
+                                <strong>—</strong>
+                            </div>
+                            
+                            <div class="receipt-divider"></div>
+                            
+                            <div id="receiptItems" class="text-center text-muted py-3">No items</div>
+                            
+                            <div class="receipt-divider"></div>
+                            
+                            <div class="receipt-totals">
+                                <div class="receipt-total-row">
+                                    <span>Subtotal</span>
+                                    <span id="receiptSubtotal">₱0.00</span>
+                                </div>
+                                <div class="receipt-total-row">
+                                    <span>VAT (12%)</span>
+                                    <span id="receiptVat">₱0.00</span>
+                                </div>
+                                <div class="receipt-total-row">
+                                    <span>Bottle return discount</span>
+                                    <span id="receiptDiscount">₱0.00</span>
+                                </div>
+                                <div class="receipt-total-row final">
+                                    <span id="receiptFinalTotalLabel">TOTAL PAID</span>
+                                    <span id="receiptTotal">₱0.00</span>
+                                </div>
+                                <div id="receiptReturnVoucherRow" class="receipt-total-row d-none">
+                                    <span>Voucher issued</span>
+                                    <span id="receiptReturnVoucher">₱0.00</span>
+                                </div>
+                                <div class="receipt-total-row mt-2">
+                                    <span>Payment</span>
+                                    <span id="receiptPayment">—</span>
+                                </div>
+                                <div id="receiptReferenceRow" class="receipt-total-row d-none">
+                                    <span>Reference</span>
+                                    <span id="receiptReference"></span>
+                                </div>
+                                <div id="receiptCashRow" class="receipt-total-row">
+                                    <span>Cash tendered</span>
+                                    <span id="receiptCash">₱0.00</span>
+                                </div>
+                                <div id="receiptChangeRow" class="receipt-total-row">
+                                    <span>Change</span>
+                                    <span id="receiptChange">₱0.00</span>
+                                </div>
+                            </div>
+                            
+                            <div id="receiptFooter" class="receipt-footer">Receipt details will appear after a sale is completed.</div>
+                        </div>
+                    </div>
+                </div>
+
+                
+                <div class="col-lg-5">
+                    
+                    
+                    <!-- Content section -->
+                    <div class="section-card">
+                        <h5 class="section-title">Share or save receipt</h5>
+                        <span id="receiptBadge" class="pill-badge-paid">No receipt available</span>
+                        
+                        <button id="printReceiptBtn" type="button" class="btn btn-gold w-100 mb-2" disabled>Print / save receipt as PDF</button>
+                        <div class="form-text mb-3">Use your browser’s print dialog and choose “Save as PDF” to download a copy.</div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label text-muted" style="font-size: 0.85rem;">Send to customer · email or mobile</label>
+                            <input id="receiptCustomerContact" type="text" class="form-control" placeholder="Enter customer contact">
+                            <button id="sendReceiptBtn" type="button" class="btn btn-outline-custom mt-2" disabled>Compose receipt message</button>
+                            <div id="receiptShareStatus" class="form-text mt-2" role="status" aria-live="polite"></div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- Content section -->
+                    <div class="section-card mb-0">
+                        <h5 class="section-title">Transaction details</h5>
+                        
+                        <div class="review-row mt-3">
+                            <span>Channel</span>
+                            <strong id="receiptChannel">—</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Items sold</span>
+                            <strong id="receiptItemCount">0 units</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Revenue</span>
+                            <strong id="receiptRevenue">₱0.00</strong>
+                        </div>
+                        <div class="review-row">
+                            <span>Product cost</span>
+                            <strong>Not tracked</strong>
+                        </div>
+                        <div class="review-row mb-4">
+                            <span>Gross profit</span>
+                            <strong>Not tracked</strong>
+                        </div>
+                        
+                        <a href="transaction_list.html" class="btn btn-outline-custom d-block text-center text-decoration-none">View saved transactions &rarr;</a>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    
+    <!-- Bootstrap interactions -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Page-specific JavaScript -->
+    <script>
+        function formatMoney(value) {
+            return `₱${value.toFixed(2)}`;
+        }
+
+        let currentReceipt = null;
+
+        function renderReceipt(receipt) {
+            const returnOnly = receipt?.returnOnly === true;
+            const isSample = receipt?.sample === true || receipt?.demo === true ||
+                /^(SAMPLE-POS-|DEMO-POS-)/i.test(String(receipt?.receiptNumber || ''));
+            const validItems = Array.isArray(receipt?.items) && receipt.items.every(item =>
+                item && typeof item.name === 'string' && item.name.trim() &&
+                Number.isFinite(item.price) && item.price > 0 &&
+                Number.isInteger(item.quantity) && item.quantity > 0);
+            const validReturnOnlyReceipt = returnOnly && Array.isArray(receipt?.bottleReturns) &&
+                receipt.bottleReturns.length > 0 && receipt.bottleReturns.every(item =>
+                    item && ['10', '30', '50'].includes(String(item.bottleSize)) &&
+                    Number.isInteger(item.quantity) && item.quantity > 0 &&
+                    Number.isFinite(item.voucherValue) && item.voucherValue >= 0);
+            const validBottleReturns = receipt?.bottleReturns === undefined ||
+                Array.isArray(receipt.bottleReturns) && receipt.bottleReturns.every(item =>
+                    item && ['10', '30', '50'].includes(String(item.bottleSize)) &&
+                    Number.isInteger(item.quantity) && item.quantity > 0 &&
+                    Number.isFinite(item.returnValue) && item.returnValue >= 0 &&
+                    Number.isFinite(item.appliedDiscount) && item.appliedDiscount >= 0 &&
+                    Number.isFinite(item.voucherValue) && item.voucherValue >= 0);
+            const supportedPayment = ['Cash', 'GCash', 'Maribank'].includes(receipt?.paymentMethod) ||
+                (receipt?.paymentMethod === 'Bottle return credit' && !returnOnly) ||
+                (receipt?.paymentMethod === 'Bottle return' && validReturnOnlyReceipt);
+            if (!receipt || typeof receipt.receiptNumber !== 'string' || !supportedPayment || !validBottleReturns ||
+                !validItems || (returnOnly ? receipt.items.length !== 0 : receipt.items.length === 0) ||
+                !Number.isFinite(receipt.total) || !Number.isFinite(receipt.subtotal) ||
+                (['GCash', 'Maribank'].includes(receipt.paymentMethod) && receipt.walletVerified !== true)) {
+                return false;
+            }
+
+            const date = new Date(receipt.createdAt);
+            if (Number.isNaN(date.getTime())) return false;
+
+            currentReceipt = receipt;
+            document.getElementById('receiptSubtitle').textContent = `${isSample ? 'Sample record · ' : ''}Receipt ${receipt.receiptNumber}`;
+            document.getElementById('receiptBannerTitle').textContent =
+                returnOnly ? 'Bottle return recorded' : isSample ? 'Sample walk-in sale' : 'Walk-in sale completed';
+            document.getElementById('receiptTypeLabel').textContent =
+                returnOnly ? 'BOTTLE RETURN RECEIPT' : isSample ? 'SAMPLE WALK-IN RECEIPT' : 'WALK-IN SALES RECEIPT';
+            const returnVoucherTotal = Array.isArray(receipt.bottleReturns)
+                ? receipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                : 0;
+            document.getElementById('receiptBannerMessage').textContent = isSample
+                ? 'Sample record only - this is not an actual sale or payment.'
+                : returnOnly
+                ? `Return recorded. A ₱${returnVoucherTotal.toFixed(2)} voucher was issued; no purchase was made.`
+                : receipt.paymentMethod === 'Bottle return credit'
+                    ? 'Bottle return credit covered the total; no additional payment was due.'
+                    : 'Payment was recorded in this browser.';
+            document.getElementById('receiptNumber').textContent = receipt.receiptNumber;
+            document.getElementById('receiptDate').textContent = date.toLocaleString();
+            document.getElementById('receiptSubtotal').textContent = formatMoney(receipt.subtotal);
+            document.getElementById('receiptVat').textContent = formatMoney(Number.isFinite(receipt.vat) ? receipt.vat : 0);
+            document.getElementById('receiptDiscount').textContent = formatMoney(receipt.discount || 0);
+            document.getElementById('receiptTotal').textContent = formatMoney(receipt.total);
+            document.getElementById('receiptFinalTotalLabel').textContent =
+                returnOnly ? 'AMOUNT PAID' : receipt.paymentMethod === 'Bottle return credit' ? 'AMOUNT DUE' : 'TOTAL PAID';
+            document.getElementById('receiptPayment').textContent = returnOnly
+                ? 'Voucher issued · no payment due'
+                : receipt.paymentMethod;
+            document.getElementById('receiptReturnVoucherRow').classList.toggle('d-none', returnVoucherTotal <= 0);
+            document.getElementById('receiptReturnVoucher').textContent = formatMoney(returnVoucherTotal);
+            const referenceRow = document.getElementById('receiptReferenceRow');
+            if (receipt.paymentReference) {
+                document.getElementById('receiptReference').textContent = receipt.paymentReference;
+                referenceRow.classList.remove('d-none');
+            }
+            const isCash = receipt.paymentMethod === 'Cash';
+            document.getElementById('receiptCashRow').classList.toggle('d-none', !isCash);
+            document.getElementById('receiptChangeRow').classList.toggle('d-none', !isCash);
+            document.getElementById('receiptCash').textContent = formatMoney(receipt.cashTendered || 0);
+            document.getElementById('receiptChange').textContent = formatMoney(receipt.change || 0);
+            document.getElementById('receiptFooter').textContent = isSample
+                ? 'Sample data only - not a real customer transaction.'
+                : returnOnly
+                ? receipt.customerName ? `Bottle return recorded for ${receipt.customerName}.` : 'Bottle return recorded.'
+                : receipt.customerName ? `Thank you, ${receipt.customerName}.` : 'Thank you for shopping with Alborá.';
+            document.getElementById('receiptBadge').textContent = isSample ? 'Sample' : returnOnly ? 'Return recorded' : 'Payment recorded';
+            document.getElementById('receiptChannel').textContent = returnOnly ? 'Bottle return' : isSample ? 'Walk-in · Sample' : 'Walk-in';
+            document.getElementById('receiptItemCount').textContent =
+                `${receipt.items.reduce((sum, item) => sum + item.quantity, 0)} units`;
+            document.getElementById('receiptRevenue').textContent = formatMoney(receipt.total);
+            document.getElementById('receiptCustomerContact').value = receipt.customerContact || '';
+            document.getElementById('sendReceiptBtn').disabled = false;
+
+            const itemsContainer = document.getElementById('receiptItems');
+            itemsContainer.replaceChildren();
+            receipt.items.forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'd-flex justify-content-between text-start mb-2';
+                const name = document.createElement('span');
+                name.textContent = `${item.name} × ${item.quantity}`;
+                const total = document.createElement('strong');
+                total.textContent = formatMoney(item.price * item.quantity);
+                row.append(name, total);
+                itemsContainer.append(row);
+            });
+            (Array.isArray(receipt.bottleReturns) ? receipt.bottleReturns : []).forEach(item => {
+                const row = document.createElement('div');
+                row.className = 'd-flex justify-content-between text-start mb-2';
+                const name = document.createElement('span');
+                const voucherCode = Number(item.voucherValue) > 0 && item.voucherCode
+                    ? ` · voucher ${item.voucherCode}`
+                    : '';
+                name.textContent = `Returned ${item.bottleSize}ml bottle × ${item.quantity}${voucherCode}`;
+                const amount = document.createElement('strong');
+                amount.textContent = returnOnly
+                    ? `Voucher ${formatMoney(Number(item.voucherValue) || 0)}`
+                    : `−${formatMoney(Number(item.appliedDiscount) || 0)}`;
+                row.append(name, amount);
+                itemsContainer.append(row);
+            });
+            document.getElementById('printReceiptBtn').disabled = false;
+            return true;
+        }
+
+        document.getElementById('printReceiptBtn').addEventListener('click', () => window.print());
+        document.getElementById('sendReceiptBtn').addEventListener('click', () => {
+            const contact = document.getElementById('receiptCustomerContact').value.trim();
+            const status = document.getElementById('receiptShareStatus');
+            const receiptNumber = document.getElementById('receiptNumber').textContent;
+            const receiptTotal = document.getElementById('receiptTotal').textContent;
+            const voucherTotal = Array.isArray(currentReceipt?.bottleReturns)
+                ? currentReceipt.bottleReturns.reduce((sum, item) => sum + (Number(item.voucherValue) || 0), 0)
+                : 0;
+            const voucherCodes = Array.isArray(currentReceipt?.bottleReturns)
+                ? currentReceipt.bottleReturns.filter(item => Number(item.voucherValue) > 0)
+                    .map(item => item.voucherCode).filter(Boolean).join(', ')
+                : '';
+            const message = currentReceipt?.returnOnly
+                ? `Thank you for returning bottles to Alborá. Receipt ${receiptNumber}. Voucher issued: ${formatMoney(voucherTotal)}${voucherCodes ? `. Code: ${voucherCodes}` : ''}.`
+                : `Thank you for shopping with Alborá. Receipt ${receiptNumber}. Total paid: ${receiptTotal}.`;
+            let destination;
+            if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contact)) {
+                destination = `mailto:${contact}?subject=${encodeURIComponent(`Alborá receipt ${receiptNumber}`)}&body=${encodeURIComponent(message)}`;
+            } else if (/^\+?[\d\s()-]{7,20}$/.test(contact)) {
+                destination = `sms:${contact.replace(/[^\d+]/g, '')}?body=${encodeURIComponent(message)}`;
+            } else {
+                status.textContent = 'Enter a valid email address or mobile number to compose the receipt message.';
+                status.className = 'form-text mt-2 text-danger';
+                return;
+            }
+            window.location.href = destination;
+            status.textContent = 'Your email or messaging app should open with the receipt details ready to send.';
+            status.className = 'form-text mt-2 text-success';
+        });
+
+        try {
+            const receipts = JSON.parse(localStorage.getItem('alboraPosReceipts') || '[]');
+            const latestReceipt = Array.isArray(receipts) ? receipts[receipts.length - 1] : null;
+            if (!renderReceipt(latestReceipt)) {
+                document.getElementById('receiptBannerMessage').textContent =
+                    'No saved sale was found in this browser. Complete a sale from the point of sale to create a receipt.';
+            }
+        } catch (error) {
+            document.getElementById('receiptBannerTitle').textContent = 'Receipt unavailable';
+            document.getElementById('receiptBannerMessage').textContent =
+                'Saved receipt data could not be read from browser storage.';
+        }
+    </script>
+    <!-- Shared admin behavior -->
+    <script src="admin-app.js"></script>
+</body>
+</html>

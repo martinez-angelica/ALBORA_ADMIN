@@ -775,7 +775,7 @@
                 receipts.push(receipt);
                 localStorage.setItem('alboraPosReceipts', JSON.stringify(receipts));
                 localStorage.removeItem(draftKey);
-                window.location.href = 'pos_digital_reciept.html';
+                window.location.href = 'pos_digital_receipt.html';
             } catch (error) {
                 showStatus(`The sale could not be completed: ${error.message}. Verify stock and receipts before retrying.`, true);
             }

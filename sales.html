@@ -331,6 +331,105 @@
             gap: 14px;
         }
 
+        .category-sales-chart.is-doughnut {
+            display: block;
+        }
+
+        .category-doughnut-layout {
+            display: grid;
+            grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
+            align-items: center;
+            gap: 28px;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+
+        .category-doughnut-svg {
+            display: block;
+            width: 100%;
+            max-width: 280px;
+            margin: 0 auto;
+        }
+
+        .category-doughnut-slice {
+            cursor: pointer;
+            transition: opacity 0.15s ease, stroke-width 0.15s ease;
+        }
+
+        .category-doughnut-slice:hover,
+        .category-doughnut-slice.is-selected {
+            opacity: 0.82;
+            stroke-width: 40;
+        }
+
+        .category-doughnut-slice:focus-visible {
+            outline: none;
+            stroke: #333;
+            stroke-width: 40;
+        }
+
+        .category-doughnut-legend {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
+            gap: 8px;
+        }
+
+        .category-doughnut-legend-item {
+            display: grid;
+            grid-template-columns: 12px minmax(0, 1fr) auto;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 10px;
+            border: 1px solid #E8D59A;
+            border-radius: 8px;
+            background: #FFF8E8;
+            color: #30271b !important;
+            text-align: left;
+            font-size: 0.82rem;
+        }
+
+        .category-doughnut-legend-item strong {
+            color: #30271b !important;
+        }
+
+        .category-doughnut-legend-item:hover,
+        .category-doughnut-legend-item[aria-pressed="true"] {
+            border-color: #C5A038;
+            background: #F7EBC8;
+        }
+
+        .category-doughnut-swatch {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .category-doughnut-tooltip {
+            width: fit-content;
+            margin: 16px auto 0;
+            padding: 9px 14px;
+            border: 1px solid #C5A038;
+            border-radius: 8px;
+            background: #211C12;
+            color: #FFF8E8;
+            font-size: 0.9rem;
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .category-doughnut-empty {
+            grid-column: 1 / -1;
+            color: var(--text-light);
+            text-align: center;
+        }
+
+        @media (max-width: 600px) {
+            .category-doughnut-layout {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 16px;
+            }
+        }
+
         .category-chart-item,
         .product-ranking-item {
             min-width: 0;
@@ -822,7 +921,8 @@
                     receiptNumber: `ONLINE-${String(order.id || '')}`,
                     createdAt: date.toISOString(),
                     items,
-                    discount: 0
+                    discount: 0,
+                    sample: order.sample === true || /^SAMPLE-/i.test(String(order.id || ''))
                 });
             });
             return { receipts, error: reportError, catalog };
@@ -1233,6 +1333,142 @@
             return hour;
         }
 
+        function renderCategoryDoughnut(container, categories, categoryTotals, periodLabel) {
+            const colors = ['#C5A038', '#8C6010', '#D7B45A', '#A77916', '#E6C76E', '#B8953B', '#F0D890', '#6F5317'];
+            const entries = categories
+                .map(category => ({ category, revenue: categoryTotals.get(category) || 0 }))
+                .filter(entry => entry.revenue > 0);
+            const totalRevenue = entries.reduce((sum, entry) => sum + entry.revenue, 0);
+            const namespace = 'http://www.w3.org/2000/svg';
+            const layout = document.createElement('div');
+            layout.className = 'category-doughnut-layout';
+            const svg = document.createElementNS(namespace, 'svg');
+            svg.setAttribute('viewBox', '0 0 240 240');
+            svg.setAttribute('class', 'category-doughnut-svg');
+            svg.setAttribute('role', 'group');
+            svg.setAttribute('aria-label', `${periodLabel} category sales. Total revenue ${formatMoney(totalRevenue)}.`);
+
+            const addCircle = (attributes) => {
+                const circle = document.createElementNS(namespace, 'circle');
+                Object.entries(attributes).forEach(([name, value]) => circle.setAttribute(name, String(value)));
+                svg.append(circle);
+                return circle;
+            };
+            const circumference = 2 * Math.PI * 82;
+            addCircle({
+                cx: 120, cy: 120, r: 82, fill: 'none',
+                stroke: '#EADFBF', 'stroke-width': 34
+            });
+
+            let offset = 0;
+            let selectedCategory = '';
+            const sliceElements = new Map();
+            const legendButtons = new Map();
+            entries.forEach((entry, index) => {
+                const length = entry.revenue / totalRevenue * circumference;
+                const percentage = Math.round(entry.revenue / totalRevenue * 100);
+                const tooltipText = `${entry.category}: ${formatMoney(entry.revenue)} (${percentage}% of total)`;
+                const slice = addCircle({
+                    cx: 120, cy: 120, r: 82, fill: 'none',
+                    stroke: colors[index % colors.length],
+                    'stroke-width': 34,
+                    'stroke-dasharray': `${length} ${circumference - length}`,
+                    'stroke-dashoffset': -offset,
+                    transform: 'rotate(-90 120 120)',
+                    class: 'category-doughnut-slice',
+                    tabindex: 0,
+                    role: 'button',
+                    'aria-label': tooltipText,
+                    'aria-pressed': 'false'
+                });
+                const title = document.createElementNS(namespace, 'title');
+                title.textContent = tooltipText;
+                slice.append(title);
+                sliceElements.set(entry.category, slice);
+                offset += length;
+
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'category-doughnut-legend-item';
+                button.setAttribute('aria-label', tooltipText);
+                button.setAttribute('aria-pressed', 'false');
+                const swatch = document.createElement('span');
+                swatch.className = 'category-doughnut-swatch';
+                swatch.style.backgroundColor = colors[index % colors.length];
+                swatch.setAttribute('aria-hidden', 'true');
+                const name = document.createElement('span');
+                name.textContent = entry.category;
+                const value = document.createElement('strong');
+                value.textContent = formatMoney(entry.revenue);
+                button.append(swatch, name, value);
+                legendButtons.set(entry.category, button);
+                button.addEventListener('click', () => selectCategory(entry.category));
+            });
+
+            const title = document.createElementNS(namespace, 'text');
+            title.setAttribute('x', '120');
+            title.setAttribute('y', '112');
+            title.setAttribute('text-anchor', 'middle');
+            title.setAttribute('fill', '#b7aa96');
+            title.setAttribute('font-size', '12');
+            title.textContent = 'Total revenue';
+            const total = document.createElementNS(namespace, 'text');
+            total.setAttribute('x', '120');
+            total.setAttribute('y', '137');
+            total.setAttribute('text-anchor', 'middle');
+            total.setAttribute('fill', '#f3eadc');
+            total.setAttribute('font-size', '14');
+            total.setAttribute('font-weight', '700');
+            total.textContent = formatMoney(totalRevenue);
+            svg.append(title, total);
+
+            const legend = document.createElement('div');
+            legend.className = 'category-doughnut-legend';
+            entries.forEach(entry => legend.append(legendButtons.get(entry.category)));
+            if (!entries.length) {
+                const empty = document.createElement('p');
+                empty.className = 'category-doughnut-empty';
+                empty.textContent = 'No category sales recorded for this period.';
+                legend.append(empty);
+            }
+            layout.append(svg, legend);
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'category-doughnut-tooltip';
+            tooltip.setAttribute('role', 'status');
+            tooltip.hidden = true;
+            container.classList.add('is-doughnut');
+            container.replaceChildren(layout, tooltip);
+
+            function selectCategory(category) {
+                selectedCategory = selectedCategory === category ? '' : category;
+                tooltip.hidden = !selectedCategory;
+                if (selectedCategory) {
+                    const entry = entries.find(item => item.category === selectedCategory);
+                    const percentage = Math.round(entry.revenue / totalRevenue * 100);
+                    tooltip.textContent = `${entry.category}: ${formatMoney(entry.revenue)} (${percentage}% of total)`;
+                }
+                entries.forEach(entry => {
+                    const selected = entry.category === selectedCategory;
+                    const slice = sliceElements.get(entry.category);
+                    const button = legendButtons.get(entry.category);
+                    slice.setAttribute('aria-pressed', String(selected));
+                    slice.classList.toggle('is-selected', selected);
+                    button.setAttribute('aria-pressed', String(selected));
+                });
+            }
+
+            sliceElements.forEach((slice, category) => {
+                slice.addEventListener('click', () => selectCategory(category));
+                slice.addEventListener('keydown', event => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                        event.preventDefault();
+                        selectCategory(category);
+                    }
+                });
+            });
+        }
+
         function renderReport() {
             const isMonthly = reportPeriod.value === 'monthly';
             const periodLabel = isMonthly ? 'Monthly' : 'Daily';
@@ -1319,37 +1555,17 @@
             const categories = reportCategory.value
                 ? [reportCategory.value]
                 : [...new Set([...knownCategories, ...categoryTotals.keys()])];
-            const maxCategoryRevenue = Math.max(...categories.map(category => categoryTotals.get(category) || 0), 0);
             const categorySalesChart = document.getElementById('categorySalesChart');
-            categorySalesChart.replaceChildren();
-            categories.forEach(category => {
-                const revenue = categoryTotals.get(category) || 0;
-                const item = document.createElement('div');
-                item.className = 'category-chart-item';
-                const heading = document.createElement('div');
-                heading.className = 'category-chart-heading';
-                const name = document.createElement('span');
-                name.textContent = category;
-                const total = document.createElement('span');
-                total.textContent = formatMoney(revenue);
-                const track = document.createElement('div');
-                track.className = 'category-chart-track';
-                const fill = document.createElement('div');
-                fill.className = 'category-chart-fill';
-                fill.style.width = maxCategoryRevenue > 0 ? `${revenue / maxCategoryRevenue * 100}%` : '0%';
-                track.setAttribute('aria-label', `${category}: ${formatMoney(revenue)}`);
-                track.append(fill);
-                heading.append(name, total);
-                item.append(heading, track);
-                categorySalesChart.append(item);
-            });
+            renderCategoryDoughnut(categorySalesChart, categories, categoryTotals, periodLabel);
 
             const categoryProductChart = document.getElementById('categoryProductChart');
             categoryProductChart.replaceChildren();
             categories.forEach(category => {
                 const products = [...productTotals.values()]
                     .filter(product => product.category === category)
-                    .sort((first, second) => second.quantity - first.quantity || first.name.localeCompare(second.name));
+                    .sort((first, second) => second.quantity - first.quantity ||
+                        second.revenue - first.revenue ||
+                        first.name.localeCompare(second.name, 'en', { sensitivity: 'base' }));
                 const card = document.createElement('div');
                 card.className = 'product-ranking-item';
                 const heading = document.createElement('div');
@@ -1362,10 +1578,15 @@
                     empty.textContent = 'No sales recorded in this period.';
                     card.append(empty);
                 } else {
-                    const rankings = [
-                        { label: 'Top seller', product: products[0], className: '' },
-                        { label: 'Least sold', product: products[products.length - 1], className: 'least' }
-                    ];
+                    const rankings = [{ label: 'Top seller', product: products[0], className: '' }];
+                    if (products.length > 1) {
+                        rankings.push({ label: 'Least sold', product: products[products.length - 1], className: 'least' });
+                    } else {
+                        const onlyProduct = document.createElement('div');
+                        onlyProduct.className = 'form-text mt-2';
+                        onlyProduct.textContent = 'Only one product sold in this category during this period.';
+                        card.append(onlyProduct);
+                    }
                     rankings.forEach(ranking => {
                         const row = document.createElement('div');
                         row.className = 'product-ranking-row';
@@ -1440,12 +1661,13 @@
                 });
             }
             const chosenCategory = reportCategory.value || 'all categories';
-            const demoSalesNote = report.receipts.some(receipt => receipt.demo === true)
-                ? ' Demo POS transactions are included in these figures.'
+            const sampleSalesNote = report.receipts.some(receipt =>
+                receipt.sample === true || receipt.demo === true || /^(SAMPLE|DEMO)-/i.test(String(receipt.receiptNumber || '')))
+                ? ' Sample POS and online records are included in these figures; they are not actual sales.'
                 : '';
             reportFilterStatus.textContent = (report.error
                 ? `${report.error} Showing ${periodLabel.toLowerCase()} report for ${chosenCategory}.`
-                : `Showing ${periodLabel.toLowerCase()} report for ${chosenCategory}. ${periodReceipts.length} recognized order(s) in this period.`) + demoSalesNote;
+                : `Showing ${periodLabel.toLowerCase()} report for ${chosenCategory}. ${periodReceipts.length} recognized order(s) in this period.`) + sampleSalesNote;
         }
 
         document.getElementById('applyReportFilters').addEventListener('click', renderReport);
@@ -1491,6 +1713,7 @@
             }
             if (['alboraPosReceipts', 'albora-orders-v1', 'alboraAdminProducts'].includes(event.key)) renderReport();
         });
+        window.addEventListener('albora:sample-records-seeded', renderReport);
         window.addEventListener('albora:demo-receipts-seeded', renderReport);
         reportDate.value = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Manila' });
         loadReportCatalog().then(renderReport);

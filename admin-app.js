@@ -502,7 +502,7 @@
                 { label: 'Orders', href: 'order_list.html', pages: ['order_list.html', 'order_details.html'] },
                 { label: 'Payment verification', href: 'product_payment_proof.html', pages: ['product_payment_proof.html', 'shipping_payment_proof.html'] },
                 { label: 'Two-stage payments', href: 'two_stage_payment.html', pages: ['two_stage_payment.html'] },
-                { label: 'Point of sale', href: 'point_of_sales.html', pages: ['point_of_sales.html', 'pos_payment_record.html', 'pos_digital_reciept.html', 'bottle_returns.html'] },
+                { label: 'Point of sale', href: 'point_of_sales.html', pages: ['point_of_sales.html', 'pos_payment_record.html', 'pos_digital_receipt.html', 'pos_digital_reciept.html', 'bottle_returns.html'] },
                 { label: 'Transactions', href: 'transaction_list.html', pages: ['transaction_list.html'] },
                 { label: 'Reports', href: 'sales.html', pages: ['sales.html', 'profits.html', 'transaction.html', 'product_performance.html'] },
                 { label: 'Business analytics', href: 'business_analytics.html', pages: ['business_analytics.html'] },
@@ -554,32 +554,62 @@
         }
     }
 
-    function seedDemoTransactions() {
+    function seedSampleWorkspace() {
+        const sampleSales = [
+            { id: 'SAMPLE-POS-001', daysAgo: 0, method: 'Cash', items: [['perf-lun-001', 'PERF-LUN-001', 'Lunaria', 'Perfume', 1250, 1], ['acc-hcl-010', 'ACC-HCL-010', 'Hair Clip', 'Accessories', 150, 2]] },
+            { id: 'SAMPLE-POS-002', daysAgo: 1, method: 'Maribank', items: [['flw-bq1-008', 'FLW-BQ1-008', '#1 Flower Bouquet', 'Flowers', 850, 1], ['jwl-aur-020', 'JWL-AUR-020', 'Aurora Bling Earrings', 'Jewelry', 380, 1]] },
+            { id: 'SAMPLE-POS-003', daysAgo: 3, method: 'Cash', items: [['perf-ivo-002', 'PERF-IVO-002', 'Ivory Pear', 'Perfume', 1150, 1]] },
+            { id: 'SAMPLE-POS-004', daysAgo: 6, method: 'Maribank', items: [['cos-vmp-015', 'COS-VMP-015', 'Velvet Matte Peneloppe', 'Cosmetics', 350, 2], ['acc-hti-012', 'ACC-HTI-012', 'Hair Tie', 'Accessories', 80, 1]] },
+            { id: 'SAMPLE-POS-005', daysAgo: 9, method: 'Cash', items: [['jwl-chn-018', 'JWL-CHN-018', 'Chain Of Hearts Necklace Silver 18 inch', 'Jewelry', 450, 1], ['acc-rst-014', 'ACC-RST-014', 'Rhinestone Sticker', 'Accessories', 120, 1]] },
+            { id: 'SAMPLE-POS-006', daysAgo: 16, method: 'Maribank', items: [['perf-fra-003', 'PERF-FRA-003', 'Fraise Royale', 'Perfume', 1300, 1]] },
+            { id: 'SAMPLE-POS-007', daysAgo: 35, method: 'Cash', items: [['flw-bq2-009', 'FLW-BQ2-009', '#2 Flower Bouquet', 'Flowers', 950, 1], ['jwl-but-021', 'JWL-BUT-021', 'Butterfly Silver Rings', 'Jewelry', 250, 1]] },
+            { id: 'SAMPLE-POS-008', daysAgo: 65, method: 'Maribank', items: [['perf-alt-004', 'PERF-ALT-004', 'Althéa', 'Perfume', 1400, 1], ['acc-hcm-011', 'ACC-HCM-011', 'Hair Clamp', 'Accessories', 180, 1]] },
+            { id: 'SAMPLE-POS-009', daysAgo: 100, method: 'Cash', items: [['jwl-amo-019', 'JWL-AMO-019', 'Amore Locket Necklace Gold 18 inch', 'Jewelry', 550, 1], ['cos-mls-017', 'COS-MLS-017', 'Magic Lip Serum Pink Shimmer', 'Cosmetics', 280, 1]] },
+            { id: 'SAMPLE-POS-010', daysAgo: 200, method: 'Maribank', items: [['perf-our-005', 'PERF-OUR-005', 'Our Story', 'Perfume', 1500, 1]] },
+            { id: 'SAMPLE-POS-011', daysAgo: 380, method: 'Cash', items: [['jwl-ara-022', 'JWL-ARA-022', 'Araw Araw Song Bracelet', 'Jewelry', 320, 1], ['acc-hne-013', 'ACC-HNE-013', 'Hair Net', 'Accessories', 60, 2]] },
+            { id: 'SAMPLE-POS-012', daysAgo: 760, method: 'Maribank', items: [['perf-fem-006', 'PERF-FEM-006', 'Femme Fatale', 'Perfume', 1450, 1], ['jwl-nab-023', 'JWL-NAB-023', 'Na Para Bang Song Bracelet', 'Jewelry', 320, 1]] },
+            { id: 'SAMPLE-POS-013', daysAgo: 0, method: 'Cash', items: [['demo-gold-hoop', 'SAMPLE-JEWEL-001', 'Sample Gold Hoop Earrings', 'Jewelry', 590, 1]] },
+            { id: 'SAMPLE-POS-014', daysAgo: 2, method: 'Maribank', items: [['demo-flower-bouquet', 'SAMPLE-FLOWER-001', 'Sample Mini Rose Bouquet', 'Flowers', 850, 1]] },
+            { id: 'SAMPLE-POS-015', daysAgo: 5, method: 'Cash', items: [['demo-cosmetic-tint', 'SAMPLE-COSMETIC-001', 'Sample Everyday Lip Tint', 'Cosmetics', 390, 2]] }
+        ];
+        let migratedProducts = false;
+        let savedSampleProducts = [];
         try {
-            if (localStorage.getItem('alboraDemoReceiptsCleared') === 'true') return;
+            const rawProducts = localStorage.getItem(KEYS.products);
+            if (rawProducts !== null) {
+                const savedProducts = JSON.parse(rawProducts);
+                if (!Array.isArray(savedProducts)) {
+                    notice('Saved product data is not a list; sample records were not added.', 'error');
+                    return;
+                }
+                savedSampleProducts = savedProducts.filter(product =>
+                    product && /^(demo|sample)-(gold-hoop|flower-bouquet|cosmetic-tint)$/i.test(String(product.id || ''))
+                );
+                const nextProducts = savedProducts.map(product => {
+                    if (!product || (product.demo !== true && !/^demo-(gold-hoop|flower-bouquet|cosmetic-tint)$/i.test(String(product.id || '')))) {
+                        return product;
+                    }
+                    const migrated = {
+                        ...product,
+                        sample: true,
+                        sku: String(product.sku || '').replace(/^DEMO-/i, 'SAMPLE-'),
+                        type: String(product.type || '').replace(/^Demo\s*·\s*/i, 'Sample · ')
+                    };
+                    delete migrated.demo;
+                    migratedProducts = true;
+                    return migrated;
+                });
+                if (migratedProducts && !writeJSON(KEYS.products, nextProducts)) return;
+            }
         } catch (error) {
-            notice(`Demo transactions could not be checked in browser storage: ${error.message}`, 'error');
+            notice(`Sample products could not be loaded from browser storage: ${error.message}`, 'error');
             return;
         }
-        const demoSales = [
-            { id: 'DEMO-POS-001', daysAgo: 0, method: 'Cash', items: [['perf-lun-001', 'PERF-LUN-001', 'Lunaria', 'Perfume', 1250, 1], ['acc-hcl-010', 'ACC-HCL-010', 'Hair Clip', 'Accessories', 150, 2]] },
-            { id: 'DEMO-POS-002', daysAgo: 1, method: 'Maribank', items: [['flw-bq1-008', 'FLW-BQ1-008', '#1 Flower Bouquet', 'Flowers', 850, 1], ['jwl-aur-020', 'JWL-AUR-020', 'Aurora Bling Earrings', 'Jewelry', 380, 1]] },
-            { id: 'DEMO-POS-003', daysAgo: 3, method: 'Cash', items: [['perf-ivo-002', 'PERF-IVO-002', 'Ivory Pear', 'Perfume', 1150, 1]] },
-            { id: 'DEMO-POS-004', daysAgo: 6, method: 'Maribank', items: [['cos-vmp-015', 'COS-VMP-015', 'Velvet Matte Peneloppe', 'Cosmetics', 350, 2], ['acc-hti-012', 'ACC-HTI-012', 'Hair Tie', 'Accessories', 80, 1]] },
-            { id: 'DEMO-POS-005', daysAgo: 9, method: 'Cash', items: [['jwl-chn-018', 'JWL-CHN-018', 'Chain Of Hearts Necklace Silver 18 inch', 'Jewelry', 450, 1], ['acc-rst-014', 'ACC-RST-014', 'Rhinestone Sticker', 'Accessories', 120, 1]] },
-            { id: 'DEMO-POS-006', daysAgo: 16, method: 'Maribank', items: [['perf-fra-003', 'PERF-FRA-003', 'Fraise Royale', 'Perfume', 1300, 1]] },
-            { id: 'DEMO-POS-007', daysAgo: 35, method: 'Cash', items: [['flw-bq2-009', 'FLW-BQ2-009', '#2 Flower Bouquet', 'Flowers', 950, 1], ['jwl-but-021', 'JWL-BUT-021', 'Butterfly Silver Rings', 'Jewelry', 250, 1]] },
-            { id: 'DEMO-POS-008', daysAgo: 65, method: 'Maribank', items: [['perf-alt-004', 'PERF-ALT-004', 'Althéa', 'Perfume', 1400, 1], ['acc-hcm-011', 'ACC-HCM-011', 'Hair Clamp', 'Accessories', 180, 1]] },
-            { id: 'DEMO-POS-009', daysAgo: 100, method: 'Cash', items: [['jwl-amo-019', 'JWL-AMO-019', 'Amore Locket Necklace Gold 18 inch', 'Jewelry', 550, 1], ['cos-mls-017', 'COS-MLS-017', 'Magic Lip Serum Pink Shimmer', 'Cosmetics', 280, 1]] },
-            { id: 'DEMO-POS-010', daysAgo: 200, method: 'Maribank', items: [['perf-our-005', 'PERF-OUR-005', 'Our Story', 'Perfume', 1500, 1]] },
-            { id: 'DEMO-POS-011', daysAgo: 380, method: 'Cash', items: [['jwl-ara-022', 'JWL-ARA-022', 'Araw Araw Song Bracelet', 'Jewelry', 320, 1], ['acc-hne-013', 'ACC-HNE-013', 'Hair Net', 'Accessories', 60, 2]] },
-            { id: 'DEMO-POS-012', daysAgo: 760, method: 'Maribank', items: [['perf-fem-006', 'PERF-FEM-006', 'Femme Fatale', 'Perfume', 1450, 1], ['jwl-nab-023', 'JWL-NAB-023', 'Na Para Bang Song Bracelet', 'Jewelry', 320, 1]] }
-        ];
         let rawReceipts;
         try {
             rawReceipts = localStorage.getItem('alboraPosReceipts');
         } catch (error) {
-            notice(`Demo transactions could not be loaded from browser storage: ${error.message}`, 'error');
+            notice(`Sample transactions could not be loaded from browser storage: ${error.message}`, 'error');
             return;
         }
 
@@ -588,21 +618,36 @@
             try {
                 receipts = JSON.parse(rawReceipts);
             } catch (error) {
-                notice('Saved POS receipt data is invalid; demo transactions were not added.', 'error');
+                notice('Saved POS receipt data is invalid; sample transactions were not added.', 'error');
                 return;
             }
             if (!Array.isArray(receipts)) {
-                notice('Saved POS receipt data is not a list; demo transactions were not added.', 'error');
+                notice('Saved POS receipt data is not a list; sample transactions were not added.', 'error');
                 return;
             }
         }
 
+        let migratedReceipts = false;
+        receipts = receipts.map(receipt => {
+            if (receipt?.demo !== true) return receipt;
+            const migrated = {
+                ...receipt,
+                receiptNumber: String(receipt.receiptNumber || '').replace(/^DEMO-POS-/, 'SAMPLE-POS-'),
+                paymentReference: String(receipt.paymentReference || '').replace(/^DEMO-REF-/, 'SAMPLE-REF-'),
+                note: 'Sample record only - not an actual sale.',
+                sample: true
+            };
+            delete migrated.demo;
+            migratedReceipts = true;
+            return migrated;
+        });
         const existingIds = new Set(receipts.map(receipt => receipt?.receiptNumber));
         const now = new Date();
-        const newReceipts = demoSales.filter(sale => !existingIds.has(sale.id)).map((sale, index) => {
+        const newReceipts = sampleSales.filter(sale => !existingIds.has(sale.id)).map(sale => {
+            const sampleIndex = sampleSales.indexOf(sale);
             const createdAt = new Date(now);
             createdAt.setDate(createdAt.getDate() - sale.daysAgo);
-            createdAt.setHours(11 + (index % 7), 15 + (index % 4) * 10, 0, 0);
+            createdAt.setHours(11 + (sampleIndex % 7), 15 + (sampleIndex % 4) * 10, 0, 0);
             const items = sale.items.map(([productId, sku, name, category, price, quantity]) => ({
                 productId, sku, name, category, price, quantity, variant: 'Default'
             }));
@@ -619,19 +664,142 @@
                 vat,
                 total,
                 paymentMethod: sale.method,
-                paymentReference: sale.method === 'Cash' ? '' : `DEMO-REF-${sale.id}`,
+                paymentReference: sale.method === 'Cash' ? '' : `SAMPLE-REF-${sale.id}`,
                 walletVerified: sale.method !== 'Cash',
                 cashTendered,
                 change: sale.method === 'Cash' ? cashTendered - total : 0,
-                customerName: `Sample Customer ${index + 1}`,
+                customerName: `Sample Customer ${sampleIndex + 1}`,
                 customerContact: '',
-                note: 'Demo transaction — sample data',
-                demo: true
+                note: 'Sample record only - not an actual sale.',
+                sample: true
             };
         });
-        if (!newReceipts.length) return;
-        if (writeJSON('alboraPosReceipts', [...receipts, ...newReceipts])) {
-            window.dispatchEvent(new CustomEvent('albora:demo-receipts-seeded'));
+        if (newReceipts.length || migratedReceipts) {
+            if (!writeJSON('alboraPosReceipts', [...receipts, ...newReceipts])) return;
+        }
+
+        let savedOrders;
+        try {
+            const rawOrders = localStorage.getItem(ORDER_KEY);
+            savedOrders = rawOrders === null ? [] : JSON.parse(rawOrders);
+        } catch (error) {
+            notice(`Sample online orders could not be loaded from browser storage: ${error.message}`, 'error');
+            return;
+        }
+        if (!Array.isArray(savedOrders)) {
+            notice('Saved online order data is not a list; sample orders were not added.', 'error');
+            return;
+        }
+
+        const sampleOrderDate = (daysAgo, hour) => {
+            const date = new Date(now);
+            date.setDate(date.getDate() - daysAgo);
+            date.setHours(hour, 0, 0, 0);
+            return date.getTime();
+        };
+        const sampleOrders = [
+            {
+                id: 'SAMPLE-ORD-001',
+                daysAgo: 1,
+                hour: 14,
+                cust: { name: 'Sample Buyer 1', mob: '09000000001', social: 'Sample account 1', em: 'buyer1@example.invalid', addr: 'Sample delivery address 1' },
+                items: [{ productId: 'demo-flower-bouquet', name: 'Sample Mini Rose Bouquet', opt: 'Small', qty: 1, unit: 850, amt: 850 }],
+                sub: 850,
+                ship: { courier: 'J&T Express', fee: 120 },
+                pay: {
+                    product: { method: 'GCash', status: 'verified', ref: 'SAMPLE-PROD-001', at: sampleOrderDate(1, 13), vt: sampleOrderDate(1, 14), proof: '' },
+                    ship: { method: 'GCash', status: 'verified', ref: 'SAMPLE-SHIP-001', at: sampleOrderDate(1, 15), vt: sampleOrderDate(1, 16), proof: '' }
+                },
+                fulfillment: 'Delivered',
+                tracking: { no: 'SAMPLE-WAYBILL-001', t: sampleOrderDate(1, 17) },
+                log: [{ t: sampleOrderDate(1, 17), txt: 'Sample order marked delivered.' }],
+                sample: true
+            },
+            {
+                id: 'SAMPLE-ORD-002',
+                daysAgo: 2,
+                hour: 10,
+                cust: { name: 'Sample Buyer 2', mob: '09000000002', social: 'Sample account 2', em: 'buyer2@example.invalid', addr: 'Sample delivery address 2' },
+                items: [{ productId: 'demo-gold-hoop', name: 'Sample Gold Hoop Earrings', opt: 'Pair', qty: 1, unit: 590, amt: 590 }],
+                sub: 590,
+                ship: { courier: 'J&T Express', fee: null },
+                pay: {
+                    product: { method: 'Maribank', status: 'pending', ref: 'SAMPLE-PROD-002', at: sampleOrderDate(2, 10), proof: '' },
+                    ship: null
+                },
+                log: [{ t: sampleOrderDate(2, 10), txt: 'Sample order created; product payment awaiting review.' }],
+                sample: true
+            },
+            {
+                id: 'SAMPLE-ORD-003',
+                daysAgo: 3,
+                hour: 16,
+                cust: { name: 'Sample Buyer 3', mob: '09000000003', social: 'Sample account 3', em: 'buyer3@example.invalid', addr: 'Sample delivery address 3' },
+                items: [{ productId: 'demo-cosmetic-tint', name: 'Sample Everyday Lip Tint', opt: 'Rose', qty: 2, unit: 390, amt: 780 }],
+                sub: 780,
+                ship: { courier: 'J&T Express', fee: 145 },
+                pay: {
+                    product: { method: 'GCash', status: 'verified', ref: 'SAMPLE-PROD-003', at: sampleOrderDate(3, 15), vt: sampleOrderDate(3, 16), proof: '' },
+                    ship: { method: 'GCash', status: 'pending', ref: 'SAMPLE-SHIP-003', at: sampleOrderDate(3, 16), proof: '' }
+                },
+                log: [{ t: sampleOrderDate(3, 16), txt: 'Sample product payment verified; shipping payment awaiting review.' }],
+                sample: true
+            }
+        ].map(order => {
+            const { daysAgo, hour, ...record } = order;
+            return { ...record, at: sampleOrderDate(daysAgo, hour) };
+        });
+        const existingOrderIds = new Set(savedOrders.map(order => order?.id));
+        const newOrders = sampleOrders.filter(order => !existingOrderIds.has(order.id));
+        if (newOrders.length && !writeJSON(ORDER_KEY, [...savedOrders, ...newOrders])) return;
+        let savedMovements;
+        try {
+            const rawMovements = localStorage.getItem('alboraStockMovements');
+            savedMovements = rawMovements === null ? [] : JSON.parse(rawMovements);
+        } catch (error) {
+            notice(`Sample stock history could not be loaded from browser storage: ${error.message}`, 'error');
+            return;
+        }
+        if (!Array.isArray(savedMovements)) {
+            notice('Saved stock movement data is not a list; sample stock history was not added.', 'error');
+            return;
+        }
+        const stockFixtures = [
+            { id: 'demo-gold-hoop', name: 'Sample Gold Hoop Earrings', sku: 'SAMPLE-JEWEL-001', stock: { Pair: 2 } },
+            { id: 'demo-flower-bouquet', name: 'Sample Mini Rose Bouquet', sku: 'SAMPLE-FLOWER-001', stock: { Small: 8, Large: 4 } },
+            { id: 'demo-cosmetic-tint', name: 'Sample Everyday Lip Tint', sku: 'SAMPLE-COSMETIC-001', stock: { Rose: 10, Coral: 7 } }
+        ];
+        const existingMovementIds = new Set(savedMovements.map(movement => movement?.id));
+        const sampleOpeningDate = new Date(now);
+        sampleOpeningDate.setDate(sampleOpeningDate.getDate() - 30);
+        const newMovements = stockFixtures.flatMap(fixture => {
+            const product = savedSampleProducts.find(item => item.id === fixture.id);
+            const stock = product?.stock || fixture.stock;
+            const variants = stock && typeof stock === 'object' ? Object.entries(stock) : [['All variants', stock]];
+            return variants.map(([variant, value]) => {
+                const quantity = Math.max(0, Number(value) || 0);
+                const id = `SAMPLE-OPENING-${fixture.id}-${variant}`;
+                if (!quantity || existingMovementIds.has(id)) return null;
+                return {
+                    id,
+                    at: sampleOpeningDate.toISOString(),
+                    productId: fixture.id,
+                    productName: product?.name || fixture.name,
+                    sku: product?.sku || fixture.sku,
+                    variant,
+                    type: 'Sample opening stock',
+                    quantity,
+                    before: 0,
+                    after: quantity,
+                    reason: 'Sample data only; no stock quantity was changed.',
+                    actor: 'Sample data',
+                    sample: true
+                };
+            }).filter(Boolean);
+        });
+        if (newMovements.length && !writeJSON('alboraStockMovements', [...savedMovements, ...newMovements].slice(0, 1000))) return;
+        if (newReceipts.length || migratedReceipts || migratedProducts || newOrders.length || newMovements.length) {
+            window.dispatchEvent(new CustomEvent('albora:sample-records-seeded'));
         }
     }
 
@@ -642,6 +810,29 @@
             return Object.values(stock).reduce((sum, value) => sum + (Number(value) || 0), 0);
         }
         return 0;
+    }
+
+    function isSampleRecord(record) {
+        const id = String(record?.id || record?.receiptNumber || '');
+        return record?.sample === true || record?.demo === true || /^(sample|demo)-/i.test(id);
+    }
+
+    function renderSampleDataNotice(show, message) {
+        let noticeElement = $('#sampleDataNotice');
+        if (!show) {
+            noticeElement?.remove();
+            return;
+        }
+        if (!noticeElement) {
+            const subtitle = $('.page-subtitle');
+            if (!subtitle) return;
+            noticeElement = document.createElement('div');
+            noticeElement.id = 'sampleDataNotice';
+            noticeElement.className = 'alert alert-warning py-2 mb-3';
+            noticeElement.setAttribute('role', 'status');
+            subtitle.insertAdjacentElement('afterend', noticeElement);
+        }
+        noticeElement.textContent = message;
     }
 
     function normalizeProduct(product) {
@@ -1007,9 +1198,10 @@
         body.innerHTML = shown.length ? shown.map(product => {
             const count = totalProductsInStock(product);
             const statusClass = count <= 0 ? 'bad' : count <= product.threshold ? 'warn' : 'good';
+            const sampleBadge = isSampleRecord(product) ? '<span class="badge text-bg-warning ms-1">Sample</span>' : '';
             return `<tr>
                 <td><input type="checkbox" class="product-row-select" value="${escapeHTML(product.id)}" aria-label="Select ${escapeHTML(product.name)}"></td>
-                <td><strong>${escapeHTML(product.name)}</strong><small class="d-block text-muted">${escapeHTML(product.type || product.cat)}</small></td>
+                <td><strong>${escapeHTML(product.name)}</strong>${sampleBadge}<small class="d-block text-muted">${escapeHTML(product.type || product.cat)}</small></td>
                 <td>${escapeHTML(product.sku)}</td>
                 <td>${escapeHTML(product.cat)}</td>
                 <td class="text-end">₱${Number(product.price).toLocaleString()}</td>
@@ -1316,8 +1508,9 @@
         });
         if (stockBody) stockBody.innerHTML = visible.length ? visible.map(product => {
             const status = stockStatus(product);
+            const sampleBadge = isSampleRecord(product) ? '<span class="badge text-bg-warning ms-1">Sample</span>' : '';
             return `<tr>
-                <td><strong>${escapeHTML(product.name)}</strong><small class="d-block text-muted">${escapeHTML(product.sku)}</small></td>
+                <td><strong>${escapeHTML(product.name)}</strong>${sampleBadge}<small class="d-block text-muted">${escapeHTML(product.sku)}</small></td>
                 <td class="text-end">${stockCount(product)}</td>
                 <td class="text-end">${product.threshold}</td>
                 <td><span class="status-pill ${status.kind}">${status.text}</span></td>
@@ -1341,8 +1534,9 @@
         if (movementBody) movementBody.innerHTML = movements.length ? movements.map(movement => {
             const date = new Date(movement.at);
             const product = products.find(item => item.id === movement.productId);
+            const sampleBadge = isSampleRecord(movement) ? '<span class="badge text-bg-warning ms-1">Sample</span>' : '';
             return `<tr><td>${escapeHTML(Number.isNaN(date.getTime()) ? '' : date.toLocaleString())}</td>
-                <td>${escapeHTML(movement.productName || product?.name || 'Deleted product')}<small class="d-block text-muted">${escapeHTML(movement.sku || '')}</small></td>
+                <td>${escapeHTML(movement.productName || product?.name || 'Deleted product')}${sampleBadge}<small class="d-block text-muted">${escapeHTML(movement.sku || '')}</small></td>
                 <td>${escapeHTML(movement.type)} · ${escapeHTML(movement.variant || 'All variants')} (${movement.before} → ${movement.after})<small class="d-block text-muted">${escapeHTML(movement.reason)}</small></td>
                 <td>${escapeHTML(movement.actor || 'Workspace user')}</td></tr>`;
         }).join('') : '<tr><td colspan="4" class="text-center text-muted py-4">No stock movements yet.</td></tr>';
@@ -1511,7 +1705,8 @@
         body.innerHTML = visible.length ? visible.map(product => {
             const stock = stockCount(product);
             const suggested = Math.max(0, product.threshold * 2 - stock);
-            return `<tr><td>${escapeHTML(product.name)}</td><td>${escapeHTML(product.sku)}</td>
+            const sampleBadge = isSampleRecord(product) ? '<span class="badge text-bg-warning ms-1">Sample</span>' : '';
+            return `<tr><td>${escapeHTML(product.name)}${sampleBadge}</td><td>${escapeHTML(product.sku)}</td>
                 <td><span class="status-pill ${stock <= 0 ? 'bad' : 'warn'}">${stock}</span></td>
                 <td>${Number(product.sold) || 0}</td><td class="text-end">${suggested}</td>
                 <td><a class="btn btn-sm btn-outline-secondary" href="stock_list_update.html?id=${encodeURIComponent(product.id)}">Adjust stock</a></td></tr>`;
@@ -1550,7 +1745,12 @@
         const body = $('tbody');
         if (!body) return;
         const categories = new Map();
-        products.filter(product => !product.archived).forEach(product => {
+        const inventoryProducts = products.filter(product => !product.archived);
+        renderSampleDataNotice(
+            inventoryProducts.some(isSampleRecord),
+            'Sample products are included in the current inventory totals.'
+        );
+        inventoryProducts.forEach(product => {
             const group = categories.get(product.cat) || { count: 0, stock: 0, low: 0, out: 0 };
             const quantity = stockCount(product);
             group.count += 1;
@@ -1622,14 +1822,15 @@
                 if (!quantity || !lineGross) return;
                 const product = findProduct(item);
                 rows.push({
-                    channel: 'Walk-in',
+                    channel: isSampleRecord(receipt) ? 'Walk-in · Sample' : 'Walk-in',
                     orderId: receipt.receiptNumber || '',
                     date: new Date(receipt.createdAt),
                     name: String(item.name || product?.name || 'Unknown product'),
                     category: String(item.category || product?.cat || 'Uncategorized'),
                     quantity,
                     revenue: Math.max(0, lineGross - (gross ? discount * lineGross / gross : 0)),
-                    cost: Math.max(0, Number(product?.cost) || 0) * quantity
+                    cost: Math.max(0, Number(product?.cost) || 0) * quantity,
+                    sample: isSampleRecord(receipt)
                 });
             });
         });
@@ -1644,14 +1845,15 @@
                 if (!quantity || !revenue) return;
                 const product = findProduct(item);
                 rows.push({
-                    channel: 'Online',
+                    channel: isSampleRecord(order) ? 'Online · Sample' : 'Online',
                     orderId: String(order.id),
                     date,
                     name: String(item.name || product?.name || 'Unknown product'),
                     category: String(product?.cat || item.category || 'Uncategorized'),
                     quantity,
                     revenue,
-                    cost: Math.max(0, Number(product?.cost) || 0) * quantity
+                    cost: Math.max(0, Number(product?.cost) || 0) * quantity,
+                    sample: isSampleRecord(order)
                 });
             });
         });
@@ -1905,7 +2107,7 @@
             id: String(order.id),
             at: Number.isFinite(Number(order.at)) ? new Date(Number(order.at)) : new Date(order.at),
             customer: order.cust?.name || '—',
-            channel: 'Online',
+            channel: isSampleRecord(order) ? 'Online · Sample' : 'Online',
             items: Array.isArray(order.items) ? order.items.map(item => `${item.name} × ${item.qty}`).join(', ') : '—',
             payment: `${orderPaymentLabel(order.pay.product)} · ${orderPaymentLabel(order.pay.ship)}`,
             fulfillment: orderStage(order),
@@ -1921,7 +2123,7 @@
             id: String(receipt.receiptNumber || 'POS sale'),
             at: new Date(receipt.createdAt),
             customer: receipt.customerName || receipt.customerContact || 'Walk-in customer',
-            channel: receipt.demo === true ? 'Walk-in · Demo' : 'Walk-in',
+            channel: isSampleRecord(receipt) ? 'Walk-in · Sample' : 'Walk-in',
             items: Array.isArray(receipt.items) ? receipt.items.map(item => `${item.name} × ${item.quantity}`).join(', ') : '—',
             payment: receipt.paymentMethod === 'Bottle return credit'
                 ? 'Bottle return credit · no payment due'
@@ -1962,6 +2164,10 @@
     function renderDashboardCharts() {
         if (page !== 'dashboard_admin.html') return;
         const rows = reportingRows();
+        renderSampleDataNotice(
+            rows.some(row => row.sample),
+            'Sample POS and online-order records are included in these dashboard figures; they are not actual sales.'
+        );
         const orders = customerOrders();
         const today = dayKey(new Date());
         const weekStart = new Date(`${today}T00:00:00Z`);
@@ -2023,10 +2229,14 @@
     function renderBusinessAnalytics() {
         if (page !== 'business_analytics.html') return;
         const rows = reportingRows();
+        renderSampleDataNotice(
+            rows.some(row => row.sample),
+            'Sample POS and online-order records are included in these analytics; they are not actual sales.'
+        );
         const revenue = rows.reduce((sum, row) => sum + row.revenue, 0);
         const cost = rows.reduce((sum, row) => sum + row.cost, 0);
         const grossProfit = revenue - cost;
-        const online = rows.filter(row => row.channel === 'Online').reduce((sum, row) => sum + row.revenue, 0);
+        const online = rows.filter(row => row.channel.startsWith('Online')).reduce((sum, row) => sum + row.revenue, 0);
         const walkIn = revenue - online;
         const onlinePercent = revenue ? online / revenue * 100 : 0;
         const walkInPercent = revenue ? walkIn / revenue * 100 : 0;
@@ -2055,8 +2265,8 @@
             }
         }
         const channelDescriptions = $$('.channel-bar + .d-flex .stat-desc');
-        if (channelDescriptions[0]) channelDescriptions[0].textContent = `Online · ${new Set(rows.filter(row => row.channel === 'Online').map(row => row.orderId)).size} orders · ${reportMoney(online)} · ${onlinePercent.toFixed(2)}%`;
-        if (channelDescriptions[1]) channelDescriptions[1].textContent = `Walk-in · ${new Set(rows.filter(row => row.channel === 'Walk-in').map(row => row.orderId)).size} sales · ${reportMoney(walkIn)} · ${walkInPercent.toFixed(2)}%`;
+        if (channelDescriptions[0]) channelDescriptions[0].textContent = `Online · ${new Set(rows.filter(row => row.channel.startsWith('Online')).map(row => row.orderId)).size} orders · ${reportMoney(online)} · ${onlinePercent.toFixed(2)}%`;
+        if (channelDescriptions[1]) channelDescriptions[1].textContent = `Walk-in · ${new Set(rows.filter(row => row.channel.startsWith('Walk-in')).map(row => row.orderId)).size} sales · ${reportMoney(walkIn)} · ${walkInPercent.toFixed(2)}%`;
         const categoryTotals = new Map();
         rows.forEach(row => categoryTotals.set(row.category, (categoryTotals.get(row.category) || 0) + row.revenue));
         renderBarChart($('.mock-bar-chart'), Array.from(categoryTotals, ([label, value]) => ({ label, value }))
@@ -2089,7 +2299,11 @@
     function renderProfitReport() {
         if (page !== 'profits.html') return;
         const rows = reportingRows();
-        const channels = ['Walk-in', 'Online'].map(channel => {
+        renderSampleDataNotice(
+            rows.some(row => row.sample),
+            'Sample POS and online-order records are included in this profit report; they are not actual sales.'
+        );
+        const channels = ['Walk-in', 'Walk-in · Sample', 'Online', 'Online · Sample'].map(channel => {
             const channelRows = rows.filter(row => row.channel === channel);
             const revenue = channelRows.reduce((sum, row) => sum + row.revenue, 0);
             const cost = channelRows.reduce((sum, row) => sum + row.cost, 0);
@@ -2126,6 +2340,10 @@
     function renderProductPerformance() {
         if (page !== 'product_performance.html') return;
         const rows = reportingRows();
+        renderSampleDataNotice(
+            rows.some(row => row.sample),
+            'Sample POS and online-order records are included in these product metrics; they are not actual sales.'
+        );
         const aggregate = new Map();
         rows.forEach(row => {
             const item = aggregate.get(row.name) || { name: row.name, category: row.category, units: 0, revenue: 0, cost: 0 };
@@ -2509,11 +2727,6 @@
             event.preventDefault();
             signIn(form);
         });
-        const signup = $('#signupForm');
-        signup?.addEventListener('submit', event => {
-            event.preventDefault();
-            notice('Self-service sign-up is disabled. Ask an Admin for an invitation.', 'error');
-        });
         const forgot = $('#forgotForm');
         forgot?.addEventListener('submit', event => {
             event.preventDefault();
@@ -2595,9 +2808,17 @@
             allOrders.filter(order => ['Shipping payment due', 'Shipping payment review', 'Shipping payment rejected'].includes(stage(order))).length,
             allOrders.filter(order => ['Confirmed', 'Ready to ship'].includes(stage(order))).length
         ];
+        const descriptions = [
+            counts[0] ? `${counts[0]} order(s) need attention` : 'No open orders',
+            counts[1] ? `${counts[1]} product payment(s) awaiting review` : 'No product proofs pending',
+            counts[2] ? `${counts[2]} shipping payment(s) need action` : 'No shipping payments pending',
+            counts[3] ? `${counts[3]} order(s) ready to ship` : 'No orders ready to ship'
+        ];
         $$('.stat-card').forEach((card, index) => {
             const value = $('.stat-value', card);
             if (value && counts[index] !== undefined) value.textContent = String(counts[index]);
+            const description = $('.stat-desc', card);
+            if (description && descriptions[index] !== undefined) description.textContent = descriptions[index];
         });
 
         const search = $('.filter-bar input');
@@ -2629,7 +2850,7 @@
                 ? `<a href="shipping_payment_proof.html?id=${encodeURIComponent(order.id)}">${escapeHTML(orderPaymentLabel(order.pay.ship))}</a>`
                 : escapeHTML(orderPaymentLabel(order.pay.ship));
             return `<tr>
-                <td><a href="${href}">${escapeHTML(order.id)}</a><small class="d-block text-muted">${escapeHTML(orderTime(order.at))}</small></td>
+                <td><a href="${href}">${escapeHTML(order.id)}</a>${isSampleRecord(order) ? '<span class="badge text-bg-warning ms-1">Sample</span>' : ''}<small class="d-block text-muted">${escapeHTML(orderTime(order.at))}</small></td>
                 <td>${escapeHTML(order.cust?.name || '—')}</td><td>${escapeHTML(items || '—')}</td>
                 <td><span class="status-pill">${productReview}</span></td>
                 <td><span class="status-pill">${shippingReview}</span></td>
@@ -2668,7 +2889,7 @@
         if (!content) return;
         const cards = $$('.section-card', content);
         const subtitle = $('.page-subtitle', content);
-        if (subtitle) subtitle.textContent = order ? `${order.id} · ${orderTime(order.at)} · ${orderStage(order)}` : 'No order selected';
+        if (subtitle) subtitle.textContent = order ? `${isSampleRecord(order) ? 'Sample · ' : ''}${order.id} · ${orderTime(order.at)} · ${orderStage(order)}` : 'No order selected';
         if (!order) {
             const first = cards[0]?.querySelector('.inner-card');
             if (first) first.innerHTML = '<div class="text-center text-muted py-4">Order not found. Return to Orders and select an online order.</div>';
@@ -2797,7 +3018,7 @@
         const payment = order.pay[type];
         const expected = type === 'product' ? Number(order.sub) || 0 : Number(order.ship.fee) || 0;
         const statusText = payment ? `${payment.method || 'Payment'} · ${payment.status || 'pending'}` : 'No payment submitted';
-        if (title) title.textContent = `${order.id} · ${order.cust?.name || 'Customer'} · ${statusText}`;
+        if (title) title.textContent = `${isSampleRecord(order) ? 'Sample · ' : ''}${order.id} · ${order.cust?.name || 'Customer'} · ${statusText}`;
         if (proofArea) {
             proofArea.replaceChildren();
             const proof = typeof payment?.proof === 'string' && /^data:image\/(?:jpeg|png|webp);base64,/i.test(payment.proof) ? payment.proof : '';
@@ -2892,7 +3113,10 @@
         if (!initializeAccess()) return;
         initializeLogout();
         if (page === 'admin_logout.html') return;
-        seedDemoTransactions();
+        const seedParams = new URLSearchParams(location.search);
+        if (currentRole() === 'admin' && (seedParams.get('sample') === '1' || seedParams.get('demo') === '1')) {
+            seedSampleWorkspace();
+        }
         installSessionControls();
         installNavigation();
         applyRoleUI();
